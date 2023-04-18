@@ -1,16 +1,14 @@
-from fastapi import FastAPI, Response, Body, Request, APIRouter
+from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
-from fastapi_users import fastapi_users, FastAPIUsers
+from fastapi_users import FastAPIUsers
 from starlette.responses import JSONResponse
 from pydantic import BaseModel
 
 from auth.auth import auth_backend
-from auth.auth import auth_backend
 from auth.database import User
 from auth.manager import get_user_manager
-from auth.manager import get_user_manager
 from auth.schemas import UserRead, UserCreate
-from users_endpoints import router
+from routers.users_endpoints import router
 
 app = FastAPI(title='First FastAPI app')
 
