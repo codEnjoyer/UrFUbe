@@ -1,6 +1,6 @@
 from fastapi_users.authentication import CookieTransport, AuthenticationBackend
 from fastapi_users.authentication import JWTStrategy
-from config import SECRET_KEY_JWT
+from src.config import SECRET_KEY_JWT
 
 cookie_transport = CookieTransport(cookie_name='urfube', cookie_max_age=3600)
 
