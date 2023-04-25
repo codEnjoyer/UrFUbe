@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import PlainTextResponse
 from fastapi_users import FastAPIUsers
 from starlette.responses import JSONResponse
@@ -11,7 +11,6 @@ from src.auth.schemas import UserRead, UserCreate
 from routers.users_endpoints import router
 
 app = FastAPI(title='First FastAPI app')
-
 
 app.include_router(router)
 
@@ -40,6 +39,7 @@ class Item(BaseModel):
 def root(data: Item):
     return {"message": f"You wrote: '{data.text}'"}
 
+
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
     [auth_backend],
@@ -55,3 +55,15 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
+
+current_user = fastapi_users.current_user()
+
+
+@app.get("/protected-route")
+def protected_route(user: User = Depends(current_user)):
+    return f"Hello, {user.username}"
+
+
+@app.get("/unprotected-route")
+def unprotected_route():
+    return f"Hello, anonymous!"

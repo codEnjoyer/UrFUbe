@@ -6,7 +6,7 @@ from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, exce
 from src.auth.models import User
 from src.auth.models import get_user_db
 
-SECRET = "SECRET"
+SECRET = "SECRET"  # TODO: Перенести в .env
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
