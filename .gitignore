@@ -296,3 +296,4 @@ pyrightconfig.json
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/inspectionProfiles/
+/migrations/versions/
