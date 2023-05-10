@@ -1,5 +1,12 @@
 # UrFU(be) like:
-* Cloude storage - yandex cloud
+
+## Quick Start:
+
+When in source root run command:
+#### docker compose up --build
+
+## Technologies we're using
+* Cloud storage - yandex cloud
 
 ## API Project
 ### Models

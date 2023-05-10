@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Request, Depends
-from fastapi.responses import PlainTextResponse
+# from fastapi.responses import PlainTextResponse
 from fastapi_users import FastAPIUsers
-from starlette.responses import JSONResponse
-from pydantic import BaseModel
+# from starlette.responses import JSONResponse
+# from pydantic import BaseModel
 
-from src.auth.auth import auth_backend
-from src.auth.models import User
-from src.auth.manager import get_user_manager
-from src.auth.schemas import UserRead, UserCreate
+from auth.auth import auth_backend
+from auth.models import User
+from auth.manager import get_user_manager
+from auth.schemas import UserRead, UserCreate
 
 from routers.users_endpoints import router
 

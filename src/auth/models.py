@@ -5,7 +5,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserD
 from sqlalchemy import MetaData, Table, Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import Base, get_async_session
+from database import Base, get_async_session
 
 metadata = MetaData()
 user = Table(
