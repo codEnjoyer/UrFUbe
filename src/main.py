@@ -13,6 +13,14 @@ from routers.users_endpoints import router
 
 app = FastAPI(title='First FastAPI app')
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(router)
 
 # region TestingPurpose
