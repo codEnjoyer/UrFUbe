@@ -12,3 +12,7 @@ DB_USER = os.environ.get("DB_USER")
 SECRET_KEY_JWT = os.environ.get("SECRET_KEY_JWT")
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
 
+BROKER_PORT = os.environ.get("BROKER_PORT")
+
+SMTP_PASS = os.environ.get("SMTP_PASS")
+SMTP_USER = os.environ.get("SMTP_USER")

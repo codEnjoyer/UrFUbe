@@ -5,6 +5,7 @@ from auth.models import User
 from auth.schemas import UserRead, UserCreate
 
 # from routers.users_endpoints import router as router_users
+from tasks.router import router as router_tasks
 
 app = FastAPI(title='First FastAPI app')
 
@@ -13,14 +14,15 @@ app = FastAPI(title='First FastAPI app')
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
     prefix="/auth",
-    tags=["auth"],
+    tags=["Auth"],
 )
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/auth",
-    tags=["auth"],
+    tags=["Auth"],
 )
 
+app.include_router(router_tasks)
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_user)):
