@@ -13,6 +13,7 @@ SECRET_KEY_JWT = os.environ.get("SECRET_KEY_JWT")
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
 
 BROKER_PORT = os.environ.get("BROKER_PORT")
+BROKER_HOST = os.environ.get("BROKER_HOST")
 
 SMTP_PASS = os.environ.get("SMTP_PASS")
 SMTP_USER = os.environ.get("SMTP_USER")

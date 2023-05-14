@@ -8,6 +8,15 @@ services:
     env_file:
       - .env-non-dev
 
+  rabbit:
+    image: rabbitmq:3.11
+    container_name: rabbitmq_app
+    hostname: rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    restart: always
+
   app:
     build:
       context: .
@@ -19,3 +28,27 @@ services:
       - 9999:8000 # :8000 - такой же в app.sh
     depends_on:
       - db
+
+  celery:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: celery_app
+    command: [ "/fastapi_app/docker/celery.sh", "celery"]
+    depends_on:
+      - rabbit
+
+
+  flower:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: flower_app
+    command: [ "/fastapi_app/docker/celery.sh", "flower"]
+    depends_on:
+      - rabbit
+      - celery
+    ports:
+      - 8888:5555

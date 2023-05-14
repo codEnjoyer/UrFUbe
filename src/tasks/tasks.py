@@ -3,12 +3,12 @@ from email.message import EmailMessage
 
 from celery import Celery
 
-from config import SMTP_PASS, SMTP_USER, BROKER_PORT
+from config import SMTP_PASS, SMTP_USER, BROKER_HOST, BROKER_PORT
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 465
 
-celery = Celery('tasks', broker=f'amqp://localhost:{BROKER_PORT}')
+celery = Celery('tasks', broker=f'amqp://{BROKER_HOST}:{BROKER_PORT}')
 
 
 # Один сервис - один терминал
