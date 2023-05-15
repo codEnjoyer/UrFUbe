@@ -69,7 +69,7 @@ form {
   margin: 10px auto;
 }
 hr{
-  margin: 0px;
+  margin: 0;
 }
 
 
