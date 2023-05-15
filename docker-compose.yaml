@@ -1,54 +1,73 @@
+version: "3.8"
 services:
   db:
     image: postgres:15
     container_name: db_app
-    command: -p 1221 # Должен быть такой же, как и в используемом .env файле
     expose:
       - 1221
     env_file:
-      - .env-non-dev
-
-  rabbit:
-    image: rabbitmq:3.11
-    container_name: rabbitmq_app
-    hostname: rabbitmq
-    ports:
-      - 15672:15672
-      - 5672:5672
-    restart: always
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
   app:
     build:
       context: .
     env_file:
-      - .env-non-dev
+      - .env
     container_name: fastapi_app
     command: ["/fastapi_app/docker/app.sh"]
     ports:
-      - 9999:8000 # :8000 - такой же в app.sh
+      - "${APP_PORT}:${APP_PORT}"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  rabbit:
+    build:
+      context: .
+      dockerfile: docker/rabbitmq.Dockerfile
+    env_file:
+      - .env
+    container_name: rabbitmq_app
+    hostname: rabbitmq
+    expose:
+      - "${BROKER_PORT}"
+    ports:
+      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${BROKER_HOST_PORT}"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   celery:
     build:
       context: .
     env_file:
-      - .env-non-dev
+      - .env
     container_name: celery_app
     command: [ "/fastapi_app/docker/celery.sh", "celery"]
     depends_on:
-      - rabbit
+      rabbit:
+        condition: service_healthy
 
 
   flower:
     build:
       context: .
     env_file:
-      - .env-non-dev
+      - .env
     container_name: flower_app
     command: [ "/fastapi_app/docker/celery.sh", "flower"]
     depends_on:
-      - rabbit
-      - celery
+      rabbit:
+        condition: service_healthy
+      celery:
+        condition: service_started
     ports:
-      - 8888:5555
+      - "${FLOWER_HOST_PORT}:${CELERY_PORT}"

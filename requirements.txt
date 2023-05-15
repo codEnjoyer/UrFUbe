@@ -53,8 +53,6 @@ jsonschema==4.17.3
 keyring==23.13.1
 kiwisolver==1.4.4
 kombu==5.2.4
-line-profiler==4.0.2
-line-profiler-pycharm==1.1.0
 lockfile==0.12.2
 makefun==1.15.1
 Mako==1.2.4
