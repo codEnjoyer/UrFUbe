@@ -17,3 +17,5 @@ BROKER_HOST = os.environ.get("BROKER_HOST")
 
 SMTP_PASS = os.environ.get("SMTP_PASS")
 SMTP_USER = os.environ.get("SMTP_USER")
+
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
