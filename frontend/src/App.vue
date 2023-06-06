@@ -1,6 +1,8 @@
 <template>
+  <div>
   <Header />
-  <VideoGrid />
+<!--  <VideoGrid />-->
+  </div>
 </template>
 
 <script>
@@ -21,6 +23,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
+body {
+  background: #E5E5E5;
+}
 
 </style>

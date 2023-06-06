@@ -2,45 +2,27 @@
   <div>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">UrFUbe</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled">Disabled</a>
-            </li>
-          </ul>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button id="search-button" type="button" class="btn btn-primary">
-              <p>Search</p>
+        <a class="navbar-brand" href="/">UrFUbe</a>
+        <div class="collapse navbar-collapse">
+          <form class="d-flex search-input" role="search">
+            <input type="search" placeholder="Поиск" aria-label="Search">
+            <button type="button" class="btn">
+              <img src="../assets/header/loupe.png">
             </button>
           </form>
+          <a class="nav-link nav-item" aria-current="page" @click="$event">
+            <img src="../assets/header/upload.png">
+          </a>
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
+            <a data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="../assets/header/account.png">
             </a>
             <ul class="dropdown-menu">
               <li>
-                <button class="dropdown-item btn btn-outline-primary " href="#">Action</button>
+                <button class="dropdown-item btn" @click="$event">Регистрация</button>
               </li>
               <li>
-                <button class="dropdown-item btn btn-outline-primary " href="#">Another action</button>
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li>
-                <button class="dropdown-item btn btn-outline-primary " href="#">Something else here</button>
+                <button class="dropdown-item btn" @click="$event">Вход</button>
               </li>
             </ul>
           </div>
@@ -58,8 +40,79 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+.btn:active {
+  border: #FFFFFF;
+}
+.btn{
+  border-radius: 0;
+}
+
+.dropdown-menu {
+  transform: translateX(-50%);
+  left: 50%;
+  top: 120%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 30%;
+
+
+  background: #FFFFFF;
+  border-radius: 10px;
+}
+
+.dropdown-item:hover{
+  background-color: #FFFFFF;
+}
+
 .dropdown {
-  margin-right: 9%;
+  margin-right: 5%;
+}
+.dropdown-item{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+
+  width: 100%;
+  height: 100%;
+
+  /* grey */
+
+  border-bottom: 1px solid #B0B0B0;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+.nav-link{
+  margin-right: 2%;
+}
+.navbar-brand {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 47px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: center;
+
+  /* black */
+
+  color: #303030;
+}
+
+input {
+  border: #FFFFFF;
+  width: 150%;
+  height: 150%;
+  outline:none;
 }
 
 form {
@@ -70,6 +123,23 @@ form {
 }
 hr{
   margin: 0;
+}
+.search-input{
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 20px;
+
+  width: 467px;
+  left: calc(50% - 467px/2 - 136.5px);
+  top: 25%;
+  bottom: 25%;
+  border: #FFFFFF;
+
+  /* white */
+
+  background: #FFFFFF;
+  border-radius: 10px;
 }
 
 
