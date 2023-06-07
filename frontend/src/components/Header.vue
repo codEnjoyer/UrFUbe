@@ -2,27 +2,35 @@
   <div>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">UrFUbe</a>
+        <a class="navbar-brand" @click="go_to_page('home')">UrFUbe</a>
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
-            <input type="search" placeholder="Поиск" aria-label="Search">
-            <button type="button" class="btn">
+            <input type="search" placeholder="Поиск" v-model="search_request" aria-label="Search">
+            <button type="button" class="btn" @click="search">
               <img src="../assets/header/loupe.png">
             </button>
           </form>
-          <a class="nav-link nav-item" aria-current="page" @click="$event">
+          <a class="nav-link nav-item" aria-current="page" v-if="isAuthorised" @click="go_to_page('upload')">
             <img src="../assets/header/upload.png">
           </a>
           <div class="nav-item dropdown">
             <a data-bs-toggle="dropdown" aria-expanded="false">
               <img src="../assets/header/account.png">
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" v-if="!isAuthorised">
               <li>
-                <button class="dropdown-item btn" @click="$event">Регистрация</button>
+                <button class="dropdown-item btn" @click="go_to_page('register')">Регистрация</button>
               </li>
               <li>
-                <button class="dropdown-item btn" @click="$event">Вход</button>
+                <button class="dropdown-item btn" @click="go_to_page('auth')">Вход</button>
+              </li>
+            </ul>
+            <ul class="dropdown-menu" v-else>
+              <li>
+                <button class="dropdown-item btn" @click="go_to_page('account')">Аккаунт</button>
+              </li>
+              <li>
+                <button class="dropdown-item btn" @click="go_to_page('exit')">Выйти</button>
               </li>
             </ul>
           </div>
@@ -35,12 +43,42 @@
 
 <script>
 export default {
-  name: "Header"
+  name: "Header",
+  props: {
+    isAuthorised: {
+      type: Boolean,
+      default: false
+    },
+    last_page: {
+      type: String
+    }
+  }, data() {
+    return {
+      search_request: '',
+      current_page: 'home'
+    }
+  },
+  methods: {
+    search() {
+      if (this.search_request !== '') {
+        this.$emit('search', this.search_request)
+        this.search_request = ''
+        this.current_page = 'search'
+      }
+    },
+    go_to_page(req) {
+      if (this.current_page !== req) {
+        this.$emit('page', req)
+        this.current_page = req
+        if (['register', 'auth', 'upload'].includes(this.current_page))
+          this.current_page = 'home'
+      }
+    },
+  }
 }
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 .btn:active {
   border: #FFFFFF;
@@ -93,7 +131,6 @@ export default {
   margin-right: 2%;
 }
 .navbar-brand {
-  font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-size: 40px;
