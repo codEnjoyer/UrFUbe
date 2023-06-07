@@ -14,9 +14,8 @@ sys.path.append(os.path.join(sys.path[0], 'src'))
 # В курсе по fastapi упомянули, что какие-то переменные во время миграций
 # могут быть не видны из-за переноса файлов в src.
 
-from src.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
-from src.auth.models import metadata as metadata_auth
-from src.videos.models import metadata as metadata_video
+from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+from database import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -36,8 +35,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = [metadata_auth, metadata_video]
-
+target_metadata = [Base.metadata]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -1,9 +1,9 @@
 import logging
 from botocore.exceptions import ClientError
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from config import BUCKET_NAME
+from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS
 from database import get_async_session
 import boto3
 
@@ -39,8 +39,15 @@ async def create_presigned_url(video_name: str):
 
 
 @router.post("/post_video")
-async def post_video(file: UploadFile = File(media_type="video/")):
+async def post_video(file: UploadFile = File()):
     file_name = file.filename
+    if not any(file_name.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
+        raise HTTPException(status_code=400, detail="Invalid file type")
     s3.upload_fileobj(file.file, BUCKET_NAME, file_name)
     url = await create_presigned_url(file_name)
     return url
+
+
+async def upload_video_db(file: UploadFile = File()):
+    pass
+
