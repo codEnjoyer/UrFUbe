@@ -34,13 +34,10 @@ export default {
   height: 39px;
   outline:none;
 
-  /* white */
-
-  background: #FFFFFF;
+  background: var(--color-element);
+  color: var(--color-text);
   border-radius: 10px;
   border-width: 0;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 0;
@@ -55,14 +52,12 @@ h1 {
   font-weight: 700;
   font-size: 40px;
   line-height: 47px;
-
-
-  color: #303030;
 }
-.btn, .btn:active {
+.btn, .btn:active, .btn:hover {
   width: 50%;
   background-color: #B2FFC8;
   border-width: 0;
+  color: #404040;
 }
 div {
   text-align: center;

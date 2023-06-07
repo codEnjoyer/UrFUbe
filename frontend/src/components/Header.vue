@@ -5,17 +5,17 @@
         <a class="navbar-brand" @click="go_to_page('home')">UrFUbe</a>
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
-            <input type="search" placeholder="Поиск" v-model="search_request" aria-label="Search">
+            <input placeholder="Поиск" v-model="search_request" aria-label="Search">
             <button type="button" class="btn" @click="search">
-              <img src="../assets/header/loupe.png">
+              <img class="icon-light" src="../assets/header/loupe.png">
             </button>
           </form>
           <a class="nav-link nav-item" aria-current="page" v-if="isAuthorised" @click="go_to_page('upload')">
-            <img src="../assets/header/upload.png">
+            <img class="icon-light" src="../assets/header/upload.png">
           </a>
           <div class="nav-item dropdown">
             <a data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="../assets/header/account.png">
+              <img class="icon-light" src="../assets/header/account.png">
             </a>
             <ul class="dropdown-menu" v-if="!isAuthorised">
               <li>
@@ -34,6 +34,7 @@
               </li>
             </ul>
           </div>
+          <a class="nav-link nav-item theme-button" aria-current="page" @click="change_theme"></a>
         </div>
       </div>
     </nav>
@@ -55,7 +56,8 @@ export default {
   }, data() {
     return {
       search_request: '',
-      current_page: 'home'
+      current_page: 'home',
+      main_theme: true
     }
   },
   methods: {
@@ -74,14 +76,16 @@ export default {
           this.current_page = 'home'
       }
     },
+    change_theme() {
+      this.$emit('theme')
+    }
   }
 }
 </script>
 
 <style scoped>
-
 .btn:active {
-  border: #FFFFFF;
+  border: var(--color-element);
 }
 .btn{
   border-radius: 0;
@@ -96,16 +100,16 @@ export default {
   padding: 30%;
 
 
-  background: #FFFFFF;
+  background: var(--color-element);
   border-radius: 10px;
 }
 
 .dropdown-item:hover{
-  background-color: #FFFFFF;
+  background-color: var(--color-element);
 }
 
 .dropdown {
-  margin-right: 5%;
+  margin-right: 2%;
 }
 .dropdown-item{
   display: flex;
@@ -116,12 +120,8 @@ export default {
   width: 100%;
   height: 100%;
 
-  /* grey */
-
-  border-bottom: 1px solid #B0B0B0;
-
-  /* Inside auto layout */
-
+  border-bottom: 1px solid var(--color-text);
+  color: var(--color-text);
   flex: none;
   order: 0;
   align-self: stretch;
@@ -142,14 +142,16 @@ export default {
 
   /* black */
 
-  color: #303030;
+  color: var(--color-text);
 }
 
 input {
-  border: #FFFFFF;
+  border: var(--color-element);
   width: 150%;
   height: 150%;
   outline:none;
+  background-color: var(--color-element);
+  color: var(--color-text)
 }
 
 form {
@@ -171,13 +173,17 @@ hr{
   left: calc(50% - 467px/2 - 136.5px);
   top: 25%;
   bottom: 25%;
-  border: #FFFFFF;
+  border: var(--color-element);
 
   /* white */
 
-  background: #FFFFFF;
+  background: var(--color-element);
   border-radius: 10px;
 }
-
-
+.theme-button {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: var(--color-text);
+}
 </style>

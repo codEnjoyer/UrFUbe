@@ -26,7 +26,8 @@ export default {
 
 .dialog__content {
   margin: auto;
-  background: #E5E5E5;
+  background: var(--color-main);
+  color: var(--color-text);
   border-radius: 12px;
   min-height: 50px;
   min-width: 300px;
