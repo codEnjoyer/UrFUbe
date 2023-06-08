@@ -17,6 +17,7 @@ SECRET_AUTH = os.environ.get("SECRET_AUTH")
 BROKER_PORT = os.environ.get("BROKER_PORT")
 BROKER_HOSTNAME = os.environ.get("BROKER_HOSTNAME")
 BROKER_HOST_PORT = os.environ.get("BROKER_HOST_PORT")
+BROKER_PASS = os.environ.get("BROKER_PASS")
 
 SMTP_PASS = os.environ.get("SMTP_PASS")
 SMTP_USER = os.environ.get("SMTP_USER")
