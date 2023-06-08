@@ -4,11 +4,13 @@ from email.message import EmailMessage
 from celery import Celery
 
 from config import SMTP_PASS, SMTP_USER, SMTP_PORT, SMTP_HOST, \
-    BROKER_HOSTNAME, BROKER_PORT
+    BROKER_PASS, BROKER_HOSTNAME, BROKER_PORT
 
 celery = Celery('tasks', broker=f'amqp://{BROKER_HOSTNAME}:{BROKER_PORT}')
+# celery = Celery('tasks', broker=f'redis://{BROKER_HOSTNAME}:{BROKER_PORT}')
 
 
+# Гайд по ручному запуску:
 # Один сервис - один терминал
 # Сначала перейти в src
 # Запуск celery: celery -A tasks.tasks:celery worker --loglevel=INFO --pool=solo (--pool=solo писать только на windows)
