@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3426a8404168
+Revision ID: c6aff4308d85
 Revises: 
-Create Date: 2023-06-08 00:59:59.908945
+Create Date: 2023-06-09 16:06:57.820844
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3426a8404168'
+revision = 'c6aff4308d85'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,7 +32,6 @@ def upgrade() -> None:
     op.create_table('video',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('duration', sa.Integer(), nullable=False),
     sa.Column('uploaded_at', sa.TIMESTAMP(), nullable=True),
     sa.Column('count_likes', sa.Integer(), nullable=True),
     sa.Column('count_dislikes', sa.Integer(), nullable=True),

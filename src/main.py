@@ -7,9 +7,8 @@ from auth.schemas import UserRead, UserCreate
 
 # from routers.users_endpoints import router as router_users
 from tasks.router import router as router_tasks
-
-from videos.router import router as video_router
-
+from auth.manager import get_user_by_id
+from videos.router import router as video_router, get_presigned_url, get_user_video_models
 app = FastAPI(title='First FastAPI app')
 
 # app.include_router(router_users)
@@ -31,7 +30,7 @@ app.include_router(video_router)
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.username}"
+    return f"Hello, {user.username}, your id in database: {user.id}"
 
 
 @app.get("/unprotected-route")
@@ -40,15 +39,17 @@ def unprotected_route():
 
 
 @app.get("/", response_class=HTMLResponse)
-def main_window():
-    return '''
+async def main_window():
+    video = await get_user_video_models(1, 1)
+    url = await get_presigned_url(f"{video.video_url}")
+    return f'''
     <html>
         <head>
             <title> TEST VIDEO SERVICES </title>
         </head>
         <body>
             <h1> ЗДЕСЬ МОГЛА БЫТЬ ВАША РЕКЛАМА </h1>
-            <video width="500" src="https://storage.yandexcloud.net/urfube-love-coding/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=YCAJElLaaDPL9n0QVuF7Jzo_v%2F20230514%2Fru-central1%2Fs3%2Faws4_request&X-Amz-Date=20230514T192934Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=6193ef9a81810fc2cb5db85158461c5d86cd8dfcd928f2b9d5bf22f3c84c26e3" controls></video>
+            <video width="500" src="{url}" controls></video>
         </body>
     </html>
     '''
