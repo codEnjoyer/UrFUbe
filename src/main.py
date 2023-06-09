@@ -10,7 +10,6 @@ from auth.manager import get_user_by_id
 from videos.router import router as video_router, get_presigned_url, get_user_video_models
 app = FastAPI(title='First FastAPI app')
 
-app.include_router(router)
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
@@ -39,8 +38,8 @@ def unprotected_route():
 
 @app.get("/", response_class=HTMLResponse)
 async def main_window():
-    video = await get_user_video_models(1, 1)
-    url = await get_presigned_url(f"{video.video_url}")
+    #video = await get_user_video_models(1, 1)
+    #url = await get_presigned_url(f"{video.video_url}")
     return f'''
     <html>
         <head>
@@ -48,7 +47,7 @@ async def main_window():
         </head>
         <body>
             <h1> ЗДЕСЬ МОГЛА БЫТЬ ВАША РЕКЛАМА </h1>
-            <video width="500" src="{url}" controls></video>
+            <video width="500" src="url" controls></video>
         </body>
     </html>
     '''
