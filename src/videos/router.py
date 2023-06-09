@@ -49,10 +49,9 @@ async def post_video(video_file: UploadFile = File(),
     if not any(video_file.filename.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file type")
     filename = video_file.filename.rsplit('.', 1)[0]
-    username = user.username
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{username}/{filename}/video")
-    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{username}/{filename}/preview")
-    await upload_video_db(filename, user)
+    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{filename}/video")
+    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{filename}/preview")
+    await upload_video_db(filename, user.id)
     url = await get_presigned_url(filename)
     return {"url": url}
 
@@ -62,17 +61,16 @@ async def get_my_videos(count: int = 5, user: User = Depends(current_user)):
     urls = []
     videos = await get_user_video_models(user.id, count)
     for video in videos:
-        urls.append(await get_presigned_url(f"{user.username}/{video.name}/video"))
+        urls.append(await get_presigned_url(f"{user.id}/{video.name}/video"))
     return urls
 
 
 @router.get("/get_videos")
 async def get_videos(user_id: int, count: int = 5):
     urls = []
-    user = await get_user_by_id(user_id)
-    videos = await get_user_video_models(user.id, count)
+    videos = await get_user_video_models(user_id, count)
     for video in videos:
-        urls.append(await get_presigned_url(f"{user.username}/{video.name}/video"))
+        urls.append(await get_presigned_url(f"{user_id}/{video.name}/video"))
     return urls
 
 
@@ -96,15 +94,15 @@ async def get_user_video_models(user_id: int, count: int = 5):
             await async_session.close()
 
 
-async def upload_video_db(filename: str, user: User):
+async def upload_video_db(filename: str, user_id: int):
     async with engine.begin() as connection:
         async_session = AsyncSession(bind=connection)
         try:
             video = Video(
                 name=filename,
-                video_url=f"{user.username}/{filename}/video",
-                preview_url=f"{user.username}/{filename}/preview",
-                user_id=user.id
+                video_url=f"{user_id}/{filename}/video",
+                preview_url=f"{user_id}/{filename}/preview",
+                user_id=user_id
             )
             async_session.add(video)
             await async_session.commit()

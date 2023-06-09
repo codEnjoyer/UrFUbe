@@ -25,7 +25,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         try:
-            s3.put_object(Bucket=BUCKET_NAME, Key=f"{user.username}/")
+            s3.put_object(Bucket=BUCKET_NAME, Key=f"{user.id}/")
         except ClientError as e:
             print(f"User {user.id} has not registered")
             return None

@@ -38,8 +38,8 @@ def unprotected_route():
 
 @app.get("/", response_class=HTMLResponse)
 async def main_window():
-    #video = await get_user_video_models(1, 1)
-    #url = await get_presigned_url(f"{video.video_url}")
+    video = await get_user_video_models(1, 1)
+    url = await get_presigned_url(f"{video.video_url}")
     return f'''
     <html>
         <head>
@@ -47,7 +47,7 @@ async def main_window():
         </head>
         <body>
             <h1> ЗДЕСЬ МОГЛА БЫТЬ ВАША РЕКЛАМА </h1>
-            <video width="500" src="url" controls></video>
+            <video width="500" src="{url}" controls></video>
         </body>
     </html>
     '''
