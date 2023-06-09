@@ -1,9 +1,9 @@
 <template>
   <div>
   <Header @page="change_page" @search="search" @theme="change_theme" :is-authorised="true"/>
-  <VideoGrid v-if="current_page === 'home'" />
+  <router-view></router-view>
   <dialog-window v-if="current_page === 'register' || current_page === 'auth' || current_page === 'upload'">
-    <RegistrationForm @exit="change_page('home')" />
+    <RegistrationForm @exit="change_page('')" />
   </dialog-window>
   </div>
 </template>
@@ -13,6 +13,7 @@ import RegistrationForm from "@/components/RegistrationForm.vue";
 import Header from "@/components/Header.vue";
 import VideoGrid from "@/components/VideoGrid.vue";
 import DialogWindow from "@/components/DialogWindow.vue";
+import router from "@/router/router";
 
 export default {
   components: {
@@ -24,17 +25,18 @@ export default {
   name: "App",
   data() {
     return {
-      current_page: 'home',
-      theme: ''
+      current_page: '',
+      theme: '',
+      is_authorised: false
     }
   },
   methods: {
     change_page(page) {
-      this.current_page = page
+      this.current_page = page;
+      this.router().push('/' + page);
     },
-    search(request) {
-      this.change_page('search')
-      alert(request)
+    router() {
+      return router;
     },
     change_theme() {
       this.theme = this.theme === 'darkMode' ? 'lightMode' : 'darkMode';
@@ -49,11 +51,23 @@ export default {
       else {
         return 'lightMode';
       }
+    },
+    logout() {
+      this.is_authorised = false;
+      this.current_page = ''
+    },
+    addHashToLocation(params) {
+      this.$router.push('/' + params);
+      history.pushState(
+        {},
+        null,
+         this.$router.path
+      )
     }
   },
   mounted() {
     let localTheme = localStorage.getItem('theme');
-    const theme = localStorage.getItem('theme') || this.getMediaPreference();
+    const theme = localTheme || this.getMediaPreference();
     document.documentElement.setAttribute('data-theme', theme);
   }
 }

@@ -2,39 +2,39 @@
   <div>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" @click="go_to_page('home')">UrFUbe</a>
+        <router-link to="/" class="navbar-brand">UrFUbe</router-link>
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
             <input placeholder="Поиск" v-model="search_request" aria-label="Search">
-            <button type="button" class="btn" @click="search">
+            <router-link to="search" class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
-            </button>
+            </router-link>
           </form>
-          <a class="nav-link nav-item" aria-current="page" v-if="isAuthorised" @click="go_to_page('upload')">
+          <a @click="change_page('upload')" class="nav-link nav-item" aria-current="page" v-if="is_authorised">
             <img class="icon-light" src="../assets/header/upload.png">
           </a>
           <div class="nav-item dropdown">
             <a data-bs-toggle="dropdown" aria-expanded="false">
               <img class="icon-light" src="../assets/header/account.png">
             </a>
-            <ul class="dropdown-menu" v-if="!isAuthorised">
+            <ul class="dropdown-menu" v-if="!is_authorised">
               <li>
-                <button class="dropdown-item btn" @click="go_to_page('register')">Регистрация</button>
+                <a @click="change_page('register')" class="dropdown-item btn">Регистрация</a>
               </li>
               <li>
-                <button class="dropdown-item btn" @click="go_to_page('auth')">Вход</button>
+                <a @click="change_page('auth')" class="dropdown-item btn">Вход</a>
               </li>
             </ul>
             <ul class="dropdown-menu" v-else>
               <li>
-                <button class="dropdown-item btn" @click="go_to_page('account')">Аккаунт</button>
+                <router-link to="/account" class="dropdown-item btn">Аккаунт</router-link>
               </li>
               <li>
-                <button class="dropdown-item btn" @click="go_to_page('exit')">Выйти</button>
+                <button @click="logout" class="dropdown-item btn">Выйти</button>
               </li>
             </ul>
           </div>
-          <a class="nav-link nav-item theme-button" aria-current="page" @click="change_theme"></a>
+          <a @click="change_theme" class="nav-link nav-item theme-button" aria-current="page"></a>
         </div>
       </div>
     </nav>
@@ -46,38 +46,30 @@
 export default {
   name: "Header",
   props: {
-    isAuthorised: {
+    is_authorised: {
       type: Boolean,
       default: false
-    },
-    last_page: {
-      type: String
     }
   }, data() {
     return {
       search_request: '',
-      current_page: 'home',
       main_theme: true
     }
   },
   methods: {
     search() {
       if (this.search_request !== '') {
-        this.$emit('search', this.search_request)
-        this.search_request = ''
-        this.current_page = 'search'
-      }
-    },
-    go_to_page(req) {
-      if (this.current_page !== req) {
-        this.$emit('page', req)
-        this.current_page = req
-        if (['register', 'auth', 'upload'].includes(this.current_page))
-          this.current_page = 'home'
+        this.search_request = '';
       }
     },
     change_theme() {
       this.$emit('theme')
+    },
+    logout() {
+      this.$emit('logout');
+    },
+    change_page(page) {
+      this.$emit('page', page);
     }
   }
 }

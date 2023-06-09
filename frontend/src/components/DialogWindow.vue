@@ -9,7 +9,7 @@
 <script>
 
 export default {
-  name: 'my-dialog'
+  name: 'dialog-window'
 }
 </script>
 

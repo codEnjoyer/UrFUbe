@@ -1,21 +1,26 @@
 <template>
-  <div>
-    <h1>UrFUbe</h1>
-    <h1>Регистрация</h1>
-    <input class="inp" placeholder="Логин">
-    <input class="inp" placeholder="Пароль">
-    <button class="btn" @click="exit">Отмена</button>
-  </div>
+    <div>
+      <h1 class="cent">UrFUbe</h1>
+      <h2 class="cent">Регистрация</h2>
+      <input class="inp cent" placeholder="Логин">
+      <input class="inp cent" placeholder="Пароль">
+      <button class="btn cent" @click="exit">Отмена</button>
+    </div>
 </template>
 
 <script>
+import router from "@/router/router";
 
 export default {
   name: "RegistrationForm",
 
   methods: {
+    router() {
+      return router
+    },
     exit() {
       this.$emit('exit')
+      this.router().go(-1)
     }
   }
 
@@ -43,6 +48,17 @@ export default {
   order: 0;
   flex-grow: 0;
 }
+
+.dw {
+  width: 100%;
+  height: 100%;
+}
+
+.cent{
+  margin-left: auto;
+  margin-right: auto;
+}
+
 h1 {
   width: 126px;
   height: 47px;
