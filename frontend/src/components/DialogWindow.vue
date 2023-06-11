@@ -1,14 +1,18 @@
 <template>
   <div class="dialog">
     <div class="dialog__content">
-      <slot></slot>
+      <RegistrationForm v-if="$route.path === '/register'"> </RegistrationForm>
     </div>
   </div>
 </template>
 
 <script>
+import RegistrationForm from "@/components/RegistrationForm.vue";
 
 export default {
+  components: {
+    RegistrationForm
+  },
   name: 'dialog-window'
 }
 </script>

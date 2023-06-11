@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import VideoGrid from "@/components/VideoGrid.vue";
 import RegistrationForm from "@/components/RegistrationForm.vue";
+import DialogWindow from "@/components/DialogWindow.vue";
 
 
 const routes = [
@@ -13,11 +14,19 @@ const routes = [
         component: RegistrationForm
     },
     {
-        path: '/search'
+        path: '/search?:req'
     },
     {
         path: '/register',
-        component: RegistrationForm
+        component: DialogWindow
+    },
+    {
+        path: '/auth',
+        component: DialogWindow
+    },
+    {
+        path: '/upload',
+        component: DialogWindow
     }
 ]
 

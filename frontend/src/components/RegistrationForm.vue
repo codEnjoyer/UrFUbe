@@ -3,24 +3,21 @@
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Регистрация</h2>
       <input class="inp cent" placeholder="Логин">
-      <input class="inp cent" placeholder="Пароль">
-      <button class="btn cent" @click="exit">Отмена</button>
+      <input class="inp cent" type="password" placeholder="Пароль">
+      <input class="inp cent" type="password" placeholder="Повтори пароль">
+      <button @click="register" class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
+      <button @click="$router.go(-1)" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
 <script>
-import router from "@/router/router";
 
 export default {
-  name: "RegistrationForm",
+  name: "register",
 
   methods: {
-    router() {
-      return router
-    },
-    exit() {
-      this.$emit('exit')
-      this.router().go(-1)
+    register() {
+      this.$router.push('/')
     }
   }
 
@@ -30,7 +27,7 @@ export default {
 <style scoped>
 .inp {
   font-size: large;
-  width: 80%;
+  width: 100%;
   margin: 20px;
   display: flex;
   flex-direction: row;
@@ -49,11 +46,6 @@ export default {
   flex-grow: 0;
 }
 
-.dw {
-  width: 100%;
-  height: 100%;
-}
-
 .cent{
   margin-left: auto;
   margin-right: auto;
@@ -69,12 +61,22 @@ h1 {
   font-size: 40px;
   line-height: 47px;
 }
-.btn, .btn:active, .btn:hover {
-  width: 50%;
-  background-color: #B2FFC8;
+.btn {
   border-width: 0;
+  width: 80%;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+.btn__exit, .btn__exit:active {
+  background: var(--color-element);
+  color: var(--color-text);
+  width: 50%;
+}
+.btn__submit, .btn__submit:active {
+  background-color: #B2FFC8;
   color: #404040;
 }
+
 div {
   text-align: center;
   margin-right: auto;
