@@ -60,6 +60,7 @@ export default {
   --color-element: #FFFFFF;
   --color-text: #303030;
   --invert-light: invert(0%);
+  --background-color: #D9D9D9
 }
 [data-theme="darkMode"] {
   --color-main: #303030;

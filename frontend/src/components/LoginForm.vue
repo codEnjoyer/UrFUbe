@@ -1,12 +1,10 @@
 <template>
     <div>
       <h1 class="cent">UrFUbe</h1>
-      <h2 class="cent">Регистрация</h2>
-      <input class="inp cent" placeholder="Имя">
+      <h2 class="cent">Вход</h2>
       <input class="inp cent" type="email" placeholder="Почта">
       <input class="inp cent" type="password" placeholder="Пароль">
-      <input class="inp cent" type="password" placeholder="Повторите пароль">
-      <button @click="register" class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
+      <button @click="login" class="btn cent btn__submit" type="submit">Войти</button>
       <button @click="$router.go(-1)" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
@@ -17,9 +15,8 @@ export default {
   name: "register",
 
   methods: {
-    register(event) {
-      this.$router.push('/');
-      event.preventDefault();
+    login() {
+      this.$router.push('/')
     }
   }
 
@@ -75,6 +72,7 @@ h1 {
 .btn__submit, .btn__submit:active {
   background-color: #B2FFC8;
   color: #404040;
+  width: 70%;
 }
 
 div {

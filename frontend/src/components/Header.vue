@@ -6,9 +6,9 @@
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
             <input placeholder="Поиск" v-model="search_request" aria-label="Search">
-            <router-link to="search" class="btn" @click="search">
+            <a to="search" class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
-            </router-link>
+            </a>
           </form>
           <router-link to="/upload" class="nav-link nav-item" aria-current="page" v-if="is_authorised">
             <img class="icon-light" src="../assets/header/upload.png">
@@ -59,6 +59,7 @@ export default {
   methods: {
     search() {
       if (this.search_request !== '') {
+        this.$router.push('/search/' + this.search_request)
         this.search_request = '';
       }
     },

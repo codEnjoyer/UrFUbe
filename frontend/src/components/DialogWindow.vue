@@ -1,17 +1,19 @@
 <template>
   <div class="dialog">
     <div class="dialog__content">
-      <RegistrationForm v-if="$route.path === '/register'"> </RegistrationForm>
+      <RegistrationForm v-if="$route.path === '/register'" />
+      <LoginForm v-if="$route.path === '/auth'" />
     </div>
   </div>
 </template>
 
 <script>
 import RegistrationForm from "@/components/RegistrationForm.vue";
-
+import LoginForm from "@/components/LoginForm.vue";
 export default {
   components: {
-    RegistrationForm
+    RegistrationForm,
+    LoginForm
   },
   name: 'dialog-window'
 }
