@@ -16,26 +16,26 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./backend/Dockerfile
     env_file:
       - .env
     container_name: fastapi_app
-    entrypoint: [ "sh", "/fastapi_app/docker/app.sh" ]
+    entrypoint: [ "sh", "/fastapi_app/backend/docker/app.sh" ]
     ports:
       - "${APP_PORT}:${APP_PORT}"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}" ]
-      interval: 5s
-      timeout: 10s
-      retries: 5
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}" ]
+#      interval: 5s
+#      timeout: 10s
+#      retries: 5
     depends_on:
       db:
         condition: service_healthy
 
   broker:
     build:
-      context: .
-      dockerfile: docker/rabbitmq.Dockerfile
+      context: ./backend/docker
+      dockerfile: rabbitmq.Dockerfile
     container_name: rabbitmq_app
     hostname: "${BROKER_HOSTNAME}"
     env_file:
@@ -76,28 +76,30 @@ services:
 
   celery:
     build:
-      context: .
+      context: ./
+      dockerfile: backend/Dockerfile
     env_file:
       - .env
     container_name: celery_app
-    command: [ "/fastapi_app/docker/celery.sh", "celery" ]
-    depends_on:
-      broker:
-        condition: service_healthy
+    command: [ "/fastapi_app/backend/docker/celery.sh", "celery" ]
+#    depends_on:
+#      broker:
+#        condition: service_healthy
 #      backend:
 #        condition: service_healthy
 
   flower:
     build:
-      context: .
+      context: ./
+      dockerfile: backend/Dockerfile
     env_file:
       - .env
     container_name: flower_app
-    command: [ "/fastapi_app/docker/celery.sh", "flower" ]
+    command: [ "/fastapi_app/backend/docker/celery.sh", "flower" ]
     ports:
       - "${FLOWER_HOST_PORT}:${CELERY_PORT}"
     depends_on:
       broker:
         condition: service_healthy
-      celery:
-        condition: service_started
+#      celery:
+#        condition: service_started
