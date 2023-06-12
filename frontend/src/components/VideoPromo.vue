@@ -1,13 +1,16 @@
 <template>
  <div  class="container__video">
    <div class="preview__wrap">
-     <img @click="watch_video" :src="pre" class="preview">
-     <router-link to="/search" @click="watch_video" class="name">
-       <a>{{name}}</a>
+     <router-link :to="'/video/' + user_id" style="text-decoration: none; color: inherit;">
+       <img :src="pre" class="preview">
+       <a class="name">
+         <p>{{name}}</p>
+       </a>
      </router-link>
-     <router-link :to="'/user/' + user_id">
-       <a class="username">{{user_name}}</a>
+     <router-link :to="'/user/' + user_id" class="username">
+       <p> Автор: {{user_name}} </p>
      </router-link>
+     <p class="username">Просмотры: {{watches.toString()}}</p>
    </div>
  </div>
 </template>
@@ -18,8 +21,10 @@ export default {
   props: {
     preview: { type: String, default: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png' },
     name: { type: String, default: 'Очень крутое видео, посмотрите какие круты е котята, очень классные котята, самое милое видео навсегда' },
+    video_id: { type: Number, default: 0 },
     user_id: { type: Number, default: 0 },
-    user_name: { type: String, default: "aynjysadasdf sdasdasdasdasdasddddddddddddddsdf ddddddddasddddddd dddddddddddddd"}
+    user_name: { type: String, default: "sdasdasdasdasdasddd dddddddddddsdfфывфывфывфв ddddddddasddddddd dddddddddddddd"},
+    watches: { type: Number, default: 10000000000 }
   },
   data() {
     return {
@@ -29,11 +34,7 @@ export default {
   mounted() {
     this.pre = this.preview;
   },
-  methods: {
-    watch_video() {
-      this.$router.push('/search');
-    }
-  }
+  methods: {  }
 }
 </script>
 
@@ -43,10 +44,10 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 19px;
 
-  width: 344px;
+  width: 33%;
   height: 293px;
 }
 .preview__wrap {
@@ -82,6 +83,11 @@ export default {
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-decoration: none;
+  border-bottom: 0;
+}
+.username, .name, .username:hover, .name:hover, .name:active, .name:focus {
+  color: var(--color-text);
+  text-decoration: none;
 }
 </style>
