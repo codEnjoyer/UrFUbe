@@ -3,6 +3,7 @@ from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from database import get_async_session
@@ -25,7 +26,7 @@ s3 = session.client(
 )
 
 router = APIRouter(
-    prefix="/videos",
+    prefix="/video",
     tags=["Video"]
 )
 
@@ -80,7 +81,7 @@ async def get_my_videos(count: int = 5,
 
 @router.get("/get_videos")
 async def get_videos(user_id: int, count: int = 5,
-                    async_session: AsyncSession = Depends(get_async_session)):
+                     async_session: AsyncSession = Depends(get_async_session)):
     urls = []
     videos = await get_user_video_models(async_session, user_id, count)
     for video in videos:
@@ -89,7 +90,7 @@ async def get_videos(user_id: int, count: int = 5,
 
 
 @router.delete("/delete/{video_id}")
-async def delete_video(video_id: int, 
+async def delete_video(video_id: int,
                        user: User = Depends(current_user),
                        async_session: AsyncSession = Depends(get_async_session)):
     video = await get_user_video_model_with_id(async_session, video_id)
@@ -101,7 +102,7 @@ async def delete_video(video_id: int,
     await async_session.commit()
     s3.delete_object(Bucket=BUCKET_NAME, Key=f"{user.id}/{video.name}")
     return video
-    
+
 
 async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int):
     try:
@@ -115,7 +116,7 @@ async def get_user_video_model_with_id(async_session: AsyncSession, video_id: in
         await async_session.close()
 
 
-async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5,):
+async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5, ):
     try:
         stmt = select(Video).filter(Video.user_id == user_id).limit(count)
         if count == 1:
@@ -147,4 +148,3 @@ async def upload_video_db(async_session: AsyncSession, filename: str, user_id: i
         raise e
     finally:
         await async_session.close()
-
