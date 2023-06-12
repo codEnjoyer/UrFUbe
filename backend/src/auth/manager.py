@@ -3,14 +3,17 @@ from typing import Optional
 import boto3
 from botocore.exceptions import ClientError
 from fastapi import Depends, Request, HTTPException
-from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, exceptions
+from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, exceptions, InvalidPasswordException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from auth.schemas import UserCreate
 from database import engine
 
 from auth.models import User, get_user_db
 
-from config import SECRET_AUTH, BUCKET_NAME
+from config import RESET_PASSWORD_TOKEN, VERIFICATION_TOKEN, BUCKET_NAME
+from tasks.tasks import send_welcome_email
 
 session = boto3.session.Session()
 s3 = session.client(
@@ -19,17 +22,22 @@ s3 = session.client(
 )
 
 
+def create_user_folder(user_id: int):
+    try:
+        s3.put_object(Bucket=BUCKET_NAME, Key=f"{user_id}/")
+    except ClientError as e:
+        print(f"User {user_id} has not registered")
+        return None
+    print(f"User {user_id} has registered.")
+
+
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-    reset_password_token_secret = SECRET_AUTH
-    verification_token_secret = SECRET_AUTH
+    reset_password_token_secret = RESET_PASSWORD_TOKEN
+    verification_token_secret = VERIFICATION_TOKEN
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        try:
-            s3.put_object(Bucket=BUCKET_NAME, Key=f"{user.id}/")
-        except ClientError as e:
-            print(f"User {user.id} has not registered")
-            return None
-        print(f"User {user.id} has registered.")
+        create_user_folder(user.id)
+        send_welcome_email(user)
 
     async def create(
             self,
@@ -57,6 +65,20 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         await self.on_after_register(created_user, request)
 
         return created_user
+
+    async def validate_password(
+            self,
+            password: str,
+            user: UserCreate | User,
+    ) -> None:
+        if len(password) < 8:
+            raise InvalidPasswordException(
+                reason="Password should be at least 8 characters"
+            )
+        if user.email in password:
+            raise InvalidPasswordException(
+                reason="Password should not contain e-mail"
+            )
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String, Integer, TIMESTAMP, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import relationship
-from database import Base
+from database import BaseModel
 from auth.models import User
 
-class Video(Base):
+class Video(BaseModel):
     __tablename__ = 'video'
 
     id = Column(Integer, primary_key=True)

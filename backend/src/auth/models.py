@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Annotated
 
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
@@ -6,10 +7,10 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship
 
-from database import get_async_session, Base
+from database import get_async_session, BaseModel
 
 
-class User(SQLAlchemyBaseUserTable[int], Base):
+class User(SQLAlchemyBaseUserTable[int], BaseModel):
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
@@ -21,5 +22,8 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     videos = relationship("Video", back_populates="user")
 
 
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+async def get_user_db(session: Annotated[AsyncSession, Depends(get_async_session)]):
     yield SQLAlchemyUserDatabase(session, User)
+
+# async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+#     yield SQLAlchemyUserDatabase(session, User)
