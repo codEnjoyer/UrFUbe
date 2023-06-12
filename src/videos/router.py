@@ -4,17 +4,24 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS
+from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from database import get_async_session
 import boto3
+from boto3.s3.transfer import TransferConfig
 from auth.models import User
 from videos.models import Video
 from auth.base_config import current_user
 
+MAX_VIDEO_SIZE = 1024 * 1024 * 512  # = 512MB
+CHUNK_SIZE = 1024 * 1024
+transfer_config = TransferConfig(multipart_chunksize=CHUNK_SIZE)
+
 session = boto3.session.Session()
 s3 = session.client(
     service_name='s3',
-    endpoint_url='https://storage.yandexcloud.net'
+    endpoint_url='https://storage.yandexcloud.net',
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
 router = APIRouter(
@@ -41,16 +48,18 @@ async def get_presigned_url(video_name: str):
     return response
 
 
-@router.post("/post_video")
-async def post_video(video_file: UploadFile = File(),
-                     preview_file: UploadFile = File(),
-                     user: User = Depends(current_user),
-                     async_session: AsyncSession = Depends(get_async_session)):
+@router.post("/upload")
+async def upload(video_file: UploadFile = File(),
+                 preview_file: UploadFile = File(),
+                 user: User = Depends(current_user),
+                 async_session: AsyncSession = Depends(get_async_session)):
     if not any(video_file.filename.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file type")
+    if video_file.size > MAX_VIDEO_SIZE:
+        raise HTTPException(status_code=400, detail=f"Invalid file size - {video_file.size / 1024 / 1024} mb")
     filename = video_file.filename.rsplit('.', 1)[0]
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{filename}/video")
-    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{filename}/preview")
+    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{filename}/video", Config=transfer_config)
+    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{filename}/preview", Config=transfer_config)
     await upload_video_db(async_session, filename, user.id)
     url = await get_presigned_url(filename)
     return {"url": url}
@@ -75,6 +84,7 @@ async def get_videos(user_id: int, count: int = 5,
     for video in videos:
         urls.append(await get_presigned_url(f"{user_id}/{video.name}/video"))
     return urls
+
 
 @router.delete("/delete/{video_id}")
 async def delete_video(video_id: int, 
