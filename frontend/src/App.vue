@@ -1,26 +1,17 @@
 <template>
   <div>
-  <Header @page="change_page" @search="search" @theme="change_theme" :is-authorised="true"/>
+  <Header @theme="change_theme" :is-authorised="true"/>
   <router-view></router-view>
-  <dialog-window v-if="current_page === 'register' || current_page === 'auth' || current_page === 'upload'">
-    <RegistrationForm @exit="change_page('')" />
-  </dialog-window>
   </div>
 </template>
 
 <script>
-import RegistrationForm from "@/components/RegistrationForm.vue";
 import Header from "@/components/Header.vue";
-import VideoGrid from "@/components/VideoGrid.vue";
-import DialogWindow from "@/components/DialogWindow.vue";
 import router from "@/router/router";
 
 export default {
   components: {
-    DialogWindow,
-    RegistrationForm,
-    Header,
-    VideoGrid
+    Header
   },
   name: "App",
   data() {
@@ -31,10 +22,6 @@ export default {
     }
   },
   methods: {
-    change_page(page) {
-      this.current_page = page;
-      this.router().push('/' + page);
-    },
     router() {
       return router;
     },
@@ -55,14 +42,6 @@ export default {
     logout() {
       this.is_authorised = false;
       this.current_page = ''
-    },
-    addHashToLocation(params) {
-      this.$router.push('/' + params);
-      history.pushState(
-        {},
-        null,
-         this.$router.path
-      )
     }
   },
   mounted() {
@@ -81,6 +60,7 @@ export default {
   --color-element: #FFFFFF;
   --color-text: #303030;
   --invert-light: invert(0%);
+  --background-color: #D9D9D9
 }
 [data-theme="darkMode"] {
   --color-main: #303030;

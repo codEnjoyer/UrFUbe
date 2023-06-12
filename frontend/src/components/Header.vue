@@ -6,23 +6,23 @@
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
             <input placeholder="Поиск" v-model="search_request" aria-label="Search">
-            <router-link to="search" class="btn" @click="search">
+            <a to="search" class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
-            </router-link>
+            </a>
           </form>
-          <a @click="change_page('upload')" class="nav-link nav-item" aria-current="page" v-if="is_authorised">
+          <router-link to="/upload" class="nav-link nav-item" aria-current="page" v-if="is_authorised">
             <img class="icon-light" src="../assets/header/upload.png">
-          </a>
+          </router-link>
           <div class="nav-item dropdown">
             <a data-bs-toggle="dropdown" aria-expanded="false">
               <img class="icon-light" src="../assets/header/account.png">
             </a>
             <ul class="dropdown-menu" v-if="!is_authorised">
               <li>
-                <a @click="change_page('register')" class="dropdown-item btn">Регистрация</a>
+                <router-link to="/register" class="dropdown-item btn">Регистрация</router-link>
               </li>
               <li>
-                <a @click="change_page('auth')" class="dropdown-item btn">Вход</a>
+                <router-link to="/auth" class="dropdown-item btn">Вход</router-link>
               </li>
             </ul>
             <ul class="dropdown-menu" v-else>
@@ -59,6 +59,7 @@ export default {
   methods: {
     search() {
       if (this.search_request !== '') {
+        this.$router.push('/search/' + this.search_request)
         this.search_request = '';
       }
     },
@@ -67,9 +68,6 @@ export default {
     },
     logout() {
       this.$emit('logout');
-    },
-    change_page(page) {
-      this.$emit('page', page);
     }
   }
 }
