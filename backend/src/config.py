@@ -9,7 +9,8 @@ DB_PASS = os.environ.get("DB_PASS")
 DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 
-APP_PORT = os.environ.get("APP_PORT")
+FRONT_APP_PORT = os.environ.get("FRONT_APP_PORT")
+BACKEND_APP_PORT = os.environ.get("BACKEND_APP_PORT")
 
 SECRET_KEY_JWT = os.environ.get("SECRET_KEY_JWT")
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
