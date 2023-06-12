@@ -41,7 +41,8 @@ async def get_presigned_url(video_name: str):
 
     return response
 
-
+# TODO(codEnjoyer): Предлагаю заменить preview_file: UploadFile = File() на preview_file: UploadFile | None = None
+# а user: User = Depends(current_user) на user: Annotated[User, Depends(current_user)]
 @router.post("/post_video")
 async def post_video(video_file: UploadFile = File(),
                      preview_file: UploadFile = File(),

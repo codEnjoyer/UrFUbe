@@ -14,13 +14,22 @@ from config import FRONT_APP_PORT
 
 app = FastAPI(title='First FastAPI app')
 
+# origins = [
+#     f"http://localhost:{FRONT_APP_PORT}",
+#
+# ]
+#
 # app.add_middleware(
 #     CORSMiddleware,
-#     allow_origins=[f"http://localhost:{FRONT_APP_PORT}"],
+#     allow_origins=origins,
 #     allow_credentials=True,
 #     allow_methods=["*"],
 #     allow_headers=["*"],
 # )
+
+from routers.users_endpoints import router as users_router
+
+app.include_router(users_router)
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
