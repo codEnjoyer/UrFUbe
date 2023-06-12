@@ -21,12 +21,11 @@ services:
     entrypoint: [ "sh", "/fastapi_app/backend/docker/app.sh" ]
     ports:
       - "${BACK_APP_PORT}:${BACK_APP_PORT}"
-#      - "${APP_PORT}:${APP_PORT}"
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}" ]
-#      interval: 5s
-#      timeout: 10s
-#      retries: 5
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     depends_on:
       db:
         condition: service_healthy
@@ -35,7 +34,7 @@ services:
     container_name: db_app
     image: postgres:15
     expose:
-      - 1221
+      - "${DB_PORT}"
     env_file:
       - .env
     healthcheck:
@@ -62,6 +61,9 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
+    depends_on:
+      backend:
+        condition: service_healthy
 
 # region Redis
 #  broker:
@@ -86,32 +88,32 @@ services:
 #        condition: service_healthy
 # endregion
 
-  celery:
-    container_name: celery_app
-    build:
-      context: ./
-      dockerfile: backend/Dockerfile
-    env_file:
-      - .env
-    command: [ "/fastapi_app/backend/docker/celery.sh", "celery" ]
-    depends_on:
-      broker:
-        condition: service_healthy
+#  celery:
+#    container_name: celery_app
+#    build:
+#      context: ./
+#      dockerfile: backend/Dockerfile
+#    env_file:
+#      - .env
+#    command: [ "/fastapi_app/backend/docker/celery.sh", "celery" ]
+#    depends_on:
+#      broker:
+#        condition: service_healthy
 #      backend:
 #        condition: service_healthy
 
-  flower:
-    container_name: flower_app
-    build:
-      context: ./
-      dockerfile: backend/Dockerfile
-    env_file:
-      - .env
-    command: [ "/fastapi_app/backend/docker/celery.sh", "flower" ]
-    ports:
-      - "${FLOWER_HOST_PORT}:${CELERY_PORT}"
-    depends_on:
-      broker:
-        condition: service_healthy
+#  flower:
+#    container_name: flower_app
+#    build:
+#      context: ./
+#      dockerfile: backend/Dockerfile
+#    env_file:
+#      - .env
+#    command: [ "/fastapi_app/backend/docker/celery.sh", "flower" ]
+#    ports:
+#      - "${FLOWER_HOST_PORT}:${CELERY_PORT}"
+#    depends_on:
+#      broker:
+#        condition: service_healthy
 #      celery:
 #        condition: service_started
