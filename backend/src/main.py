@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends
 
-from auth.base_config import fastapi_users, auth_backend, current_user
+from auth.base_config import current_user
 from auth.models import User
-from auth.schemas import UserRead, UserCreate
+from auth.router import router as auth_router
 
-from tasks.router import router as router_tasks
+from tasks.router import router as tasks_router
 from videos.router import router as video_router
 from fastapi.middleware.cors import CORSMiddleware
 from config import FRONT_APP_PORT
@@ -27,19 +27,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth",
-    tags=["Auth"],
-)
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["Auth"],
-)
-
-app.include_router(router_tasks)
+app.include_router(auth_router)
+app.include_router(tasks_router)
 app.include_router(video_router)
 
 
