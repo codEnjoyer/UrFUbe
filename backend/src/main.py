@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 
-from auth.base_config import current_user
-from auth.models import User
 from auth.router import router as auth_router
 
 from tasks.router import router as tasks_router
 from videos.router import router as video_router
+from utils.router import router as utils_router
+
 from fastapi.middleware.cors import CORSMiddleware
 from config import FRONT_APP_PORT
 
@@ -30,13 +30,4 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(tasks_router)
 app.include_router(video_router)
-
-
-@app.get("/protected-route")
-def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.username}, your id in database: {user.id}"
-
-
-@app.get("/unprotected-route")
-def unprotected_route():
-    return f"Hello, anonymous!"
+app.include_router(utils_router)
