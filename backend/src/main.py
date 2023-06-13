@@ -42,9 +42,8 @@ app.include_router(utils_router)
          status_code=status.HTTP_200_OK,
          tags=["Video"])
 async def root(offset: int = 0, limit: int = 15, session: AsyncSession = Depends(get_async_session)):
-    # async with session.begin():
-    #     query = select(Video).order_by(Video.count_likes).offset(offset).limit(limit)
-    #     result = await session.execute(query)
-    #     videos = result.scalars().all()
-    #     return videos
+    # query = select(Video).order_by(Video.count_likes).offset(offset).limit(limit)
+    # result = await session.execute(query)
+    # videos = result.scalars().all()
+    # return videos
     return []

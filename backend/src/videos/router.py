@@ -143,7 +143,7 @@ async def delete_video(video_id: int,
     return await get_video_info(video)
 
 
-async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int):
+async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int) -> Video:
     try:
         stmt = select(Video).filter(Video.id == video_id)
         video = await async_session.scalar(stmt)
@@ -155,7 +155,7 @@ async def get_user_video_model_with_id(async_session: AsyncSession, video_id: in
         await async_session.close()
 
 
-async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5):
+async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5) -> List[Video]:
     try:
         stmt = select(Video).filter(Video.user_id == user_id).limit(count)
         if count == 1:
@@ -172,7 +172,7 @@ async def get_user_video_models(async_session: AsyncSession, user_id: int, count
         await async_session.close()
 
 
-async def get_videos_info(videos) -> List[VideoRead]:
+async def get_videos_info(videos: List[Video]) -> List[VideoRead]:
     videos_info = []
     for video in videos:
         video_info = await get_video_info(video)
@@ -180,7 +180,7 @@ async def get_videos_info(videos) -> List[VideoRead]:
     return videos_info
 
 
-async def get_video_info(video) -> VideoRead:
+async def get_video_info(video: Video) -> VideoRead:
     video_url = await get_presigned_url(video.video_url)
     preview_url = await get_presigned_url(video.preview_url)
     return VideoRead(video_id=video.id,
@@ -192,14 +192,14 @@ async def get_video_info(video) -> VideoRead:
                      upload_at=video.uploaded_at)
 
 
-def get_comments_info(comments) -> List[CommentRead]:
+def get_comments_info(comments: List[Comment]) -> List[CommentRead]:
     comments_read = []
     for comment in comments:
         comments_read.append(get_comment_info(comment))
     return comments_read
 
 
-def get_comment_info(comment) -> CommentRead:
+def get_comment_info(comment: Comment) -> CommentRead:
     return CommentRead(user_id=comment.user_id,
                        video_id=comment.video_id,
                        text=comment.text,
