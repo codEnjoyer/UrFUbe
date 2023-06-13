@@ -1,13 +1,11 @@
 <template>
     <div>
       <h1 class="cent">UrFUbe</h1>
-      <h2 class="cent">Регистрация</h2>
-      <input class="inp cent" placeholder="Имя">
-      <input class="inp cent" type="email" placeholder="Почта">
-      <input class="inp cent" type="password" placeholder="Пароль">
-      <input class="inp cent" type="password" placeholder="Повторите пароль">
-      <button @click="register" class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
-      <button @click="$router.go(-1)" class="btn cent btn__exit" type="reset">Отмена</button>
+      <h2 class="cent">Вход</h2>
+      <input v-model="email" class="inp cent" type="email" placeholder="Почта">
+      <input v-model="password" class="inp cent" type="password" placeholder="Пароль">
+      <button @click="login" class="btn cent btn__submit" type="submit">Войти</button>
+      <button @click="$emit('exit')" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
@@ -17,9 +15,19 @@ export default {
   name: "register",
 
   methods: {
-    register(event) {
-      this.$router.push('/');
-      event.preventDefault();
+    login() {
+      if (this.email && this.password) {
+        const form = new FormData();
+        form.set('email', this.email);
+        form.set('password', this.password);
+        this.$emit('login', form)
+      }
+    }
+  },
+  data() {
+    return {
+      email: String = "",
+      password: String = ""
     }
   }
 
@@ -75,6 +83,7 @@ h1 {
 .btn__submit, .btn__submit:active {
   background-color: #B2FFC8;
   color: #404040;
+  width: 70%;
 }
 
 div {
