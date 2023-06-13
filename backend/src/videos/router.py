@@ -11,9 +11,9 @@ from database import get_async_session
 import boto3
 from boto3.s3.transfer import TransferConfig
 from auth.models import User
-from videos.models import Video, Reaction, ReactionType
+from videos.models import Video, Reaction, ReactionType, Comment
 from auth.base_config import current_user
-from videos.shemas import VideoRead, ReactionRead
+from videos.shemas import VideoRead, ReactionRead, CommentRead
 
 MAX_VIDEO_SIZE = 1024 * 1024 * 512  # = 512MB
 CHUNK_SIZE = 1024 * 1024
@@ -83,6 +83,23 @@ async def post_reaction(video_id: int,
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
 
 
+@router.post("/post_comment")
+async def post_comment(video_id: int, text: str,
+                       user: User = Depends(current_user),
+                       async_session: AsyncSession = Depends(get_async_session)) -> CommentRead:
+    comment = Comment(user_id=user.id, video_id=video_id, text=text)
+    async_session.add(comment)
+    await async_session.commit()
+    return get_comment_info(comment)
+
+
+@router.get('/comments')
+async def get_comments_by_video_id(video_id: int, count: int = 5, offset: int = 0,
+                                   db_session: AsyncSession = Depends(get_async_session)) -> List[CommentRead]:
+    comments = await db_session.scalars(
+        select(Comment).where(Comment.video_id == video_id).offset(offset).limit(count))
+    return get_comments_info(comments)
+
 @router.get("/get_my_videos")
 async def get_my_videos(count: int = 5,
                         user: User = Depends(current_user),
@@ -98,7 +115,7 @@ async def get_videos(user_id: int, count: int = 5,
     return await get_videos_info(videos)
 
 
-@router.get("/likes_videos")
+@router.get("/reaction_videos")
 async def get_reaction_videos(count: int, offset: int,
                               reaction_type: ReactionType,
                               user: User = Depends(current_user),
@@ -173,6 +190,20 @@ async def get_video_info(video) -> VideoRead:
                      preview_url=preview_url,
                      count_reactions=video.count_reactions,
                      upload_at=video.uploaded_at)
+
+
+def get_comments_info(comments) -> List[CommentRead]:
+    comments_read = []
+    for comment in comments:
+        comments_read.append(get_comment_info(comment))
+    return comments_read
+
+
+def get_comment_info(comment) -> CommentRead:
+    return CommentRead(user_id=comment.user_id,
+                       video_id=comment.video_id,
+                       text=comment.text,
+                       create_at=comment.create_at)
 
 
 async def upload_video_db(async_session: AsyncSession, filename: str, user_id: int) -> VideoRead:

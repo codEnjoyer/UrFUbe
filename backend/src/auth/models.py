@@ -18,8 +18,10 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_active: bool = Column(Boolean, default=True, nullable=False)
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
+
     videos = relationship("Video", back_populates="user")
     reaction = relationship("Reaction", back_populates="user")
+    comment = relationship("Comment", back_populates="user")
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
