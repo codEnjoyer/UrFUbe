@@ -1,15 +1,18 @@
 version: "3.8"
 services:
-  frontend:
-    container_name: frontend_app
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - './frontend:/fastapi_app/frontend'
-      - '/fastapi_app/frontend/node_modules'
-    ports:
-      - "${FRONT_APP_PORT}:${FRONT_APP_PORT}"
+#  frontend:
+#    container_name: frontend_app
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    volumes:
+#      - './frontend:/fastapi_app/frontend'
+#      - '/fastapi_app/frontend/node_modules'
+#    ports:
+#      - "${FRONT_APP_PORT}:${FRONT_APP_PORT}"
+#    depends_on:
+#        backend:
+#            condition: service_healthy
 
   backend:
     container_name: fastapi_app
@@ -43,27 +46,27 @@ services:
       timeout: 10s
       retries: 5
 
-  broker:
-    container_name: rabbitmq_app
-    build:
-      context: ./backend/docker
-      dockerfile: rabbitmq.Dockerfile
-    hostname: "${BROKER_HOSTNAME}"
-    env_file:
-      - .env
-    expose:
-      - "${BROKER_PORT}"
-    ports:
-      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
-    restart: on-failure
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${BROKER_HOST_PORT}"]
-      interval: 5s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      backend:
-        condition: service_healthy
+#  broker:
+#    container_name: rabbitmq_app
+#    build:
+#      context: ./backend/docker
+#      dockerfile: rabbitmq.Dockerfile
+#    hostname: "${BROKER_HOSTNAME}"
+#    env_file:
+#      - .env
+#    expose:
+#      - "${BROKER_PORT}"
+#    ports:
+#      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
+#    restart: on-failure
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:${BROKER_HOST_PORT}"]
+#      interval: 5s
+#      timeout: 10s
+#      retries: 5
+#    depends_on:
+#      backend:
+#        condition: service_healthy
 
 # region Redis
 #  broker:
@@ -117,3 +120,17 @@ services:
 #        condition: service_healthy
 #      celery:
 #        condition: service_started
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:${DB_PORT}"
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      backend:
+#        condition: service_healthy

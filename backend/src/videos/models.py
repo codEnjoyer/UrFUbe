@@ -4,6 +4,9 @@ from sqlalchemy.orm import relationship
 from database import Base
 from enum import IntEnum
 
+# WARNING: Не удалять импорт User'а
+from auth.models import User
+
 
 class Video(Base):
     __tablename__ = 'video'
