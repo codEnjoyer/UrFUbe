@@ -13,7 +13,8 @@ FRONT_APP_PORT = os.environ.get("FRONT_APP_PORT")
 BACKEND_APP_PORT = os.environ.get("BACKEND_APP_PORT")
 
 SECRET_KEY_JWT = os.environ.get("SECRET_KEY_JWT")
-SECRET_AUTH = os.environ.get("SECRET_AUTH")
+RESET_PASSWORD_TOKEN = os.environ.get("RESET_PASSWORD_TOKEN")
+VERIFICATION_TOKEN = os.environ.get("VERIFICATION_TOKEN")
 
 BROKER_PORT = os.environ.get("BROKER_PORT")
 BROKER_HOSTNAME = os.environ.get("BROKER_HOSTNAME")

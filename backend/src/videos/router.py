@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from database import get_async_session
@@ -28,7 +29,7 @@ s3 = session.client(
 )
 
 router = APIRouter(
-    prefix="/videos",
+    prefix="/video",
     tags=["Video"]
 )
 

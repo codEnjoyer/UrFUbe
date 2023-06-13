@@ -9,7 +9,7 @@ from config import DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 metadata = MetaData()
-Base = declarative_base(metadata=metadata)
+BaseModel = declarative_base(metadata=metadata)
 
 
 engine = create_async_engine(DATABASE_URL)
