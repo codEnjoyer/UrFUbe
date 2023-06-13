@@ -16,3 +16,8 @@ def protected_route(user: Annotated[User, Depends(current_user)]):
 @router.get("/unprotected-route")
 def unprotected_route():
     return f"Hello, anonymous!"
+
+
+@router.get("/health")
+def health():
+    return {"status": "OK"}
