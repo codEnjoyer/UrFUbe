@@ -7,10 +7,10 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship
 
-from database import get_async_session, BaseModel
+from database import get_async_session, Base
 
 
-class User(SQLAlchemyBaseUserTable[int], BaseModel):
+class User(SQLAlchemyBaseUserTable[int], Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
@@ -27,6 +27,3 @@ class User(SQLAlchemyBaseUserTable[int], BaseModel):
 
 async def get_user_db(session: Annotated[AsyncSession, Depends(get_async_session)]):
     yield SQLAlchemyUserDatabase(session, User)
-
-# async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-#     yield SQLAlchemyUserDatabase(session, User)

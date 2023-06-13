@@ -7,8 +7,7 @@ from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, exce
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.schemas import UserCreate
-from database import engine
+from auth.schemas import UserCreate, UserRead
 
 from auth.models import User, get_user_db
 

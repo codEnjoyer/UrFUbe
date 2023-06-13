@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from database import Base
 from enum import IntEnum
-from auth.models import User
 
 
 class Video(Base):

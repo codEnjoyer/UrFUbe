@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from videos.models import ReactionType
 
 
@@ -7,8 +7,8 @@ class VideoRead(BaseModel):
     video_id: int
     name: str
     username: str
-    video_url: str
-    preview_url: str
+    video_url: HttpUrl
+    preview_url: HttpUrl
     count_reactions: int
     upload_at: datetime
 
