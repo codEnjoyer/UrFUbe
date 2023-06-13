@@ -13,7 +13,7 @@ from boto3.s3.transfer import TransferConfig
 from auth.models import User
 from videos.models import Video, Reaction, ReactionType, Comment
 from auth.base_config import current_user
-from videos.shemas import VideoRead, ReactionRead, CommentRead
+from videos.sсhemas import VideoRead, ReactionRead, CommentRead
 
 MAX_VIDEO_SIZE = 1024 * 1024 * 512  # = 512MB
 CHUNK_SIZE = 1024 * 1024
