@@ -58,6 +58,12 @@ export default {
   object-fit: cover;
   margin: 20px 30px;
   overflow: hidden;
+  background-color: var(--color-element);
+  border-radius: 10px;
+}
+.video__text {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 .name {
   display: -webkit-box;

@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <h1 class="label">Видео по запросу: "{{$route.params.req}}"</h1>
+    <h1 class="label" v-if="$route.params.req">Видео по запросу: "{{$route.params.req}}"</h1>
     <div class="container">
       <video-promo-horizontal
           v-for="video in videos"
