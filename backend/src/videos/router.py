@@ -1,7 +1,9 @@
 import logging
+from typing import List
+
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
@@ -9,8 +11,9 @@ from database import get_async_session
 import boto3
 from boto3.s3.transfer import TransferConfig
 from auth.models import User
-from videos.models import Video
+from videos.models import Video, Reaction, ReactionType
 from auth.base_config import current_user
+from videos.shemas import VideoRead, ReactionRead
 
 MAX_VIDEO_SIZE = 1024 * 1024 * 512  # = 512MB
 CHUNK_SIZE = 1024 * 1024
@@ -30,17 +33,11 @@ router = APIRouter(
 )
 
 
-async def get_presigned_url(video_name: str):
-    """
-    Generate a presigned URL to share an S3 object
-    :param video_name: string
-    :param expiration: Time in seconds for the presigned URL to remain valid
-    :return: Presigned URL as string. If error, returns None.
-    """
+async def get_presigned_url(file_name: str):
     try:
         response = s3.generate_presigned_url('get_object',
                                              Params={'Bucket': BUCKET_NAME,
-                                                     'Key': video_name})
+                                                     'Key': file_name})
     except ClientError as e:
         logging.error(e)
         return None
@@ -54,7 +51,7 @@ async def get_presigned_url(video_name: str):
 async def upload(video_file: UploadFile = File(),
                  preview_file: UploadFile = File(),
                  user: User = Depends(current_user),
-                 async_session: AsyncSession = Depends(get_async_session)):
+                 async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     if not any(video_file.filename.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file type")
     if video_file.size > MAX_VIDEO_SIZE:
@@ -62,36 +59,62 @@ async def upload(video_file: UploadFile = File(),
     filename = video_file.filename.rsplit('.', 1)[0]
     s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{filename}/video", Config=transfer_config)
     s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{filename}/preview", Config=transfer_config)
-    await upload_video_db(async_session, filename, user.id)
-    url = await get_presigned_url(filename)
-    return {"url": url}
+    return await upload_video_db(async_session, filename, user.id)
+
+
+@router.post("/reaction")
+async def post_reaction(video_id: int,
+                        reaction_type: ReactionType,
+                        user: User = Depends(current_user),
+                        async_session: AsyncSession = Depends(get_async_session)) -> ReactionRead:
+    reaction = await async_session.scalar(
+        select(Reaction).where((user.id == Reaction.user_id) & (video_id == Reaction.video_id)))
+    video = await get_user_video_model_with_id(async_session, video_id)
+    if reaction:
+        video.count_reactions -= 1
+        await async_session.delete(reaction)
+    else:
+        reaction = Reaction(video_id=video_id, user_id=user.id, reaction_type_id=int(reaction_type))
+        video.count_reactions += 1
+        async_session.add(reaction)
+    stmt = (update(Video).where(Video.id == video.id).values(count_reactions=video.count_reactions))
+    await async_session.execute(stmt)
+    await async_session.commit()
+    return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
 
 
 @router.get("/get_my_videos")
 async def get_my_videos(count: int = 5,
                         user: User = Depends(current_user),
-                        async_session: AsyncSession = Depends(get_async_session)):
-    urls = []
+                        async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
     videos = await get_user_video_models(async_session, user.id, count)
-    for video in videos:
-        urls.append(await get_presigned_url(f"{user.id}/{video.name}/video"))
-    return urls
+    return await get_videos_info(videos)
 
 
 @router.get("/get_videos")
 async def get_videos(user_id: int, count: int = 5,
-                    async_session: AsyncSession = Depends(get_async_session)):
-    urls = []
+                     async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
     videos = await get_user_video_models(async_session, user_id, count)
-    for video in videos:
-        urls.append(await get_presigned_url(f"{user_id}/{video.name}/video"))
-    return urls
+    return await get_videos_info(videos)
+
+
+@router.get("/likes_videos")
+async def get_reaction_videos(count: int, offset: int,
+                              reaction_type: ReactionType,
+                              user: User = Depends(current_user),
+                              async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
+    liked_videos = await async_session.scalars(
+        select(Video)
+        .join(Reaction)
+        .where((Reaction.user_id == user.id) & (Reaction.reaction_type_id == int(reaction_type)))
+        .offset(offset).limit(count))
+    return await get_videos_info(liked_videos)
 
 
 @router.delete("/delete/{video_id}")
-async def delete_video(video_id: int, 
+async def delete_video(video_id: int,
                        user: User = Depends(current_user),
-                       async_session: AsyncSession = Depends(get_async_session)):
+                       async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     video = await get_user_video_model_with_id(async_session, video_id)
     if video is None:
         raise HTTPException(status_code=404, detail="Video not found")
@@ -100,8 +123,8 @@ async def delete_video(video_id: int,
     await async_session.delete(video)
     await async_session.commit()
     s3.delete_object(Bucket=BUCKET_NAME, Key=f"{user.id}/{video.name}")
-    return video
-    
+    return await get_video_info(video)
+
 
 async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int):
     try:
@@ -115,7 +138,7 @@ async def get_user_video_model_with_id(async_session: AsyncSession, video_id: in
         await async_session.close()
 
 
-async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5,):
+async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5):
     try:
         stmt = select(Video).filter(Video.user_id == user_id).limit(count)
         if count == 1:
@@ -132,7 +155,27 @@ async def get_user_video_models(async_session: AsyncSession, user_id: int, count
         await async_session.close()
 
 
-async def upload_video_db(async_session: AsyncSession, filename: str, user_id: int):
+async def get_videos_info(videos) -> List[VideoRead]:
+    videos_info = []
+    for video in videos:
+        video_info = await get_video_info(video)
+        videos_info.append(video_info)
+    return videos_info
+
+
+async def get_video_info(video) -> VideoRead:
+    video_url = await get_presigned_url(video.video_url)
+    preview_url = await get_presigned_url(video.preview_url)
+    return VideoRead(video_id=video.id,
+                     name=video.name,
+                     username=video.user.username,
+                     video_url=video_url,
+                     preview_url=preview_url,
+                     count_reactions=video.count_reactions,
+                     upload_at=video.uploaded_at)
+
+
+async def upload_video_db(async_session: AsyncSession, filename: str, user_id: int) -> VideoRead:
     try:
         video = Video(
             name=filename,
@@ -142,9 +185,9 @@ async def upload_video_db(async_session: AsyncSession, filename: str, user_id: i
         )
         async_session.add(video)
         await async_session.commit()
+        return await get_video_info(video)
     except Exception as e:
         await async_session.rollback()
         raise e
     finally:
         await async_session.close()
-

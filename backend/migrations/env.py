@@ -15,7 +15,7 @@ sys.path.append(os.path.join(sys.path[0], 'src'))
 # могут быть не видны из-за переноса файлов в src.
 
 from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
-from videos.models import Video
+from videos.models import Reaction
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -35,7 +35,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = [Video.metadata]
+target_metadata = [Reaction.metadata]
 
 # other values from the config, defined by the needs of .env.py,
 # can be acquired:

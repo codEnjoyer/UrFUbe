@@ -6,7 +6,7 @@ from fastapi import Depends, Request, HTTPException
 from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, exceptions
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from database import engine
+from auth.schemas import UserRead
 
 from auth.models import User, get_user_db
 
@@ -63,17 +63,17 @@ async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-async def get_user_by_id(user_id: int):
-    async with engine.begin() as connection:
-        async_session = AsyncSession(bind=connection)
-        try:
-            stmt = select(User).filter(User.id == user_id)
-            user = await async_session.scalar(stmt)
-            if user is None:
-                raise HTTPException(status_code=400, detail="Invalid user_id")
-            return user
-        except Exception as e:
-            await async_session.rollback()
-            raise e
-        finally:
-            await async_session.close()
+async def get_user_by_id(async_session: AsyncSession, user_id: int) -> UserRead:
+    try:
+        stmt = select(User).filter(User.id == user_id)
+        user = await async_session.scalar(stmt)
+        if user is None:
+            raise HTTPException(status_code=400, detail="Invalid user_id")
+        return UserRead(id=user.id,
+                        email=user.email,
+                        username=user.username)
+    except Exception as e:
+        await async_session.rollback()
+        raise e
+    finally:
+        await async_session.close()
