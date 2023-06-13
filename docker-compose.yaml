@@ -1,18 +1,18 @@
 version: "3.8"
 services:
-#  frontend:
-#    container_name: frontend_app
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    volumes:
-#      - './frontend:/fastapi_app/frontend'
-#      - '/fastapi_app/frontend/node_modules'
-#    ports:
-#      - "${FRONT_APP_PORT}:${FRONT_APP_PORT}"
-#    depends_on:
-#        backend:
-#            condition: service_healthy
+  #  frontend:
+  #    container_name: frontend_app
+  #    build:
+  #      context: ./frontend
+  #      dockerfile: Dockerfile
+  #    volumes:
+  #      - './frontend:/fastapi_app/frontend'
+  #      - '/fastapi_app/frontend/node_modules'
+  #    ports:
+  #      - "${FRONT_APP_PORT}:${FRONT_APP_PORT}"
+  #    depends_on:
+  #        backend:
+  #            condition: service_healthy
 
   backend:
     container_name: fastapi_app
@@ -30,105 +30,108 @@ services:
       timeout: 10s
       retries: 5
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
   db:
     container_name: db_app
     image: postgres:15
-    expose:
-      - "${DB_PORT}"
     env_file:
       - .env
-    healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'" ]
-      interval: 3s
-      timeout: 10s
-      retries: 5
-
-#  broker:
-#    container_name: rabbitmq_app
-#    build:
-#      context: ./backend/docker
-#      dockerfile: rabbitmq.Dockerfile
-#    hostname: "${BROKER_HOSTNAME}"
-#    env_file:
-#      - .env
-#    expose:
-#      - "${BROKER_PORT}"
-#    ports:
-#      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
-#    restart: on-failure
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    command: [ "-p", "${DB_PORT}" ]
+    #TODO: Написать рабочий healthcheck
 #    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:${BROKER_HOST_PORT}"]
-#      interval: 5s
+#      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'" ]
+#      interval: 3s
 #      timeout: 10s
 #      retries: 5
-#    depends_on:
-#      backend:
-#        condition: service_healthy
 
-# region Redis
-#  broker:
-#    image: redis:7
-#    env_file:
-#      - .env
-#    container_name: redis_app
-#    hostname: redis
-#    command: "redis-server --save 20 1 --loglevel warning"
-#    expose:
-#      - "${BROKER_PORT}"
-#    ports:
-#      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
-#    restart: on-failure
-#    healthcheck:
-#      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
-#      interval: 5s
-#      timeout: 10s
-#      retries: 5
-#    depends_on:
-#      backend:
-#        condition: service_healthy
-# endregion
+  #  broker:
+  #    container_name: rabbitmq_app
+  #    build:
+  #      context: ./backend/docker
+  #      dockerfile: rabbitmq.Dockerfile
+  #    hostname: "${BROKER_HOSTNAME}"
+  #    env_file:
+  #      - .env
+  #    expose:
+  #      - "${BROKER_PORT}"
+  #    ports:
+  #      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
+  #    restart: on-failure
+  #    healthcheck:
+  #      test: ["CMD", "curl", "-f", "http://localhost:${BROKER_HOST_PORT}"]
+  #      interval: 5s
+  #      timeout: 10s
+  #      retries: 5
+  #    depends_on:
+  #      backend:
+  #        condition: service_healthy
 
-#  celery:
-#    container_name: celery_app
-#    build:
-#      context: ./
-#      dockerfile: backend/Dockerfile
-#    env_file:
-#      - .env
-#    command: [ "/fastapi_app/backend/docker/celery.sh", "celery" ]
-#    depends_on:
-#      broker:
-#        condition: service_healthy
-#      backend:
-#        condition: service_healthy
+  # region Redis
+  #  broker:
+  #    image: redis:7
+  #    env_file:
+  #      - .env
+  #    container_name: redis_app
+  #    hostname: redis
+  #    command: "redis-server --save 20 1 --loglevel warning"
+  #    expose:
+  #      - "${BROKER_PORT}"
+  #    ports:
+  #      - "${BROKER_HOST_PORT}:${BROKER_HOST_PORT}"
+  #    restart: on-failure
+  #    healthcheck:
+  #      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+  #      interval: 5s
+  #      timeout: 10s
+  #      retries: 5
+  #    depends_on:
+  #      backend:
+  #        condition: service_healthy
+  # endregion
 
-#  flower:
-#    container_name: flower_app
-#    build:
-#      context: ./
-#      dockerfile: backend/Dockerfile
-#    env_file:
-#      - .env
-#    command: [ "/fastapi_app/backend/docker/celery.sh", "flower" ]
-#    ports:
-#      - "${FLOWER_HOST_PORT}:${CELERY_PORT}"
-#    depends_on:
-#      broker:
-#        condition: service_healthy
-#      celery:
-#        condition: service_started
+  #  celery:
+  #    container_name: celery_app
+  #    build:
+  #      context: ./
+  #      dockerfile: backend/Dockerfile
+  #    env_file:
+  #      - .env
+  #    command: [ "/fastapi_app/backend/docker/celery.sh", "celery" ]
+  #    depends_on:
+  #      broker:
+  #        condition: service_healthy
+  #      backend:
+  #        condition: service_healthy
+
+  #  flower:
+  #    container_name: flower_app
+  #    build:
+  #      context: ./
+  #      dockerfile: backend/Dockerfile
+  #    env_file:
+  #      - .env
+  #    command: [ "/fastapi_app/backend/docker/celery.sh", "flower" ]
+  #    ports:
+  #      - "${FLOWER_HOST_PORT}:${CELERY_PORT}"
+  #    depends_on:
+  #      broker:
+  #        condition: service_healthy
+  #      celery:
+  #        condition: service_started
 
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
+    env_file:
+      - .env
     environment:
       PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
-      - "5050:${DB_PORT}"
+      - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
 #    depends_on:
 #      db:
 #        condition: service_healthy

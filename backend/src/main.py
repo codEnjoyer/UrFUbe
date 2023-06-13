@@ -36,6 +36,7 @@ app.include_router(video_router)
 app.include_router(utils_router)
 
 
+# TODO: Написать fetch видосов
 @app.get("/",
          description="Первые 15 видео с самым лучшим рейтингом на хостинге",
          status_code=status.HTTP_200_OK,

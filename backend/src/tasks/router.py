@@ -4,6 +4,7 @@ from auth.base_config import current_user
 
 from .tasks import send_welcome_email
 
+# TODO:снести всё
 router = APIRouter(prefix="/report")
 
 
