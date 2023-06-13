@@ -6,6 +6,7 @@ from videos.models import ReactionType
 class VideoRead(BaseModel):
     video_id: int
     name: str
+    description: str
     username: str
     video_url: HttpUrl
     preview_url: HttpUrl

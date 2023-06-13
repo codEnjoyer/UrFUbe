@@ -48,7 +48,8 @@ async def get_presigned_url(file_name: str):
 # TODO(codEnjoyer): Предлагаю заменить preview_file: UploadFile = File() на preview_file: UploadFile | None = None
 # а user: User = Depends(current_user) на user: Annotated[User, Depends(current_user)]
 @router.post("/upload")
-async def upload(video_file: UploadFile = File(),
+async def upload(name: str, description: str,
+                 video_file: UploadFile = File(),
                  preview_file: UploadFile = File(),
                  user: User = Depends(current_user),
                  async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
@@ -56,15 +57,13 @@ async def upload(video_file: UploadFile = File(),
         raise HTTPException(status_code=400, detail="Invalid file type")
     if video_file.size > MAX_VIDEO_SIZE:
         raise HTTPException(status_code=400, detail=f"Invalid file size - {video_file.size / 1024 / 1024} mb")
-    filename = video_file.filename.rsplit('.', 1)[0]
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{filename}/video", Config=transfer_config)
-    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{filename}/preview", Config=transfer_config)
-    return await upload_video_db(async_session, filename, user.id)
+    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video", Config=transfer_config)
+    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview", Config=transfer_config)
+    return await upload_video_db(async_session, user.id, name, description)
 
 
 @router.post("/reaction")
-async def post_reaction(video_id: int,
-                        reaction_type: ReactionType,
+async def post_reaction(video_id: int, reaction_type: ReactionType,
                         user: User = Depends(current_user),
                         async_session: AsyncSession = Depends(get_async_session)) -> ReactionRead:
     reaction = await async_session.scalar(
@@ -99,6 +98,7 @@ async def get_comments_by_video_id(video_id: int, count: int = 5, offset: int = 
     comments = await db_session.scalars(
         select(Comment).where(Comment.video_id == video_id).offset(offset).limit(count))
     return get_comments_info(comments)
+
 
 @router.get("/get_my_videos")
 async def get_my_videos(count: int = 5,
@@ -185,6 +185,7 @@ async def get_video_info(video: Video) -> VideoRead:
     preview_url = await get_presigned_url(video.preview_url)
     return VideoRead(video_id=video.id,
                      name=video.name,
+                     description=video.description,
                      username=video.user.username,
                      video_url=video_url,
                      preview_url=preview_url,
@@ -206,12 +207,13 @@ def get_comment_info(comment: Comment) -> CommentRead:
                        create_at=comment.create_at)
 
 
-async def upload_video_db(async_session: AsyncSession, filename: str, user_id: int) -> VideoRead:
+async def upload_video_db(async_session: AsyncSession, user_id: int, name: str, description: str) -> VideoRead:
     try:
         video = Video(
-            name=filename,
-            video_url=f"{user_id}/{filename}/video",
-            preview_url=f"{user_id}/{filename}/preview",
+            name=name,
+            description=description,
+            video_url=f"{user_id}/{name}/video",
+            preview_url=f"{user_id}/{name}/preview",
             user_id=user_id
         )
         async_session.add(video)

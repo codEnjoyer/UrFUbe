@@ -22,9 +22,9 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
-    videos = relationship("Video", back_populates="user")
-    reaction = relationship("Reaction", back_populates="user")
-    comment = relationship("Comment", back_populates="user")
+    videos = relationship("Video", back_populates="user", cascade="all, delete-orphan")
+    reaction = relationship("Reaction", back_populates="user", cascade="all, delete-orphan")
+    comment = relationship("Comment", back_populates="user", cascade="all, delete-orphan")
 
 
 async def get_user_db(session: Annotated[AsyncSession, Depends(get_async_session)]):

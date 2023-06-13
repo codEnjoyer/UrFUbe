@@ -13,6 +13,7 @@ class Video(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(length=50), nullable=False)
+    description = Column(String(length=150))
     uploaded_at = Column(TIMESTAMP, default=datetime.utcnow)
     count_reactions = Column(Integer, default=0)
     count_views = Column(Integer, default=0)
@@ -21,8 +22,8 @@ class Video(Base):
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
 
     user = relationship("User", back_populates="videos", lazy='subquery')
-    reaction = relationship("Reaction", back_populates="video")
-    comment = relationship("Comment", back_populates='video')
+    reaction = relationship("Reaction", back_populates="video", cascade="all, delete-orphan")
+    comment = relationship("Comment", back_populates='video', cascade="all, delete-orphan")
 
 
 class Comment(Base):
