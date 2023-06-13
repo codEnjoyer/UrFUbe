@@ -2,12 +2,12 @@
     <div>
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Регистрация</h2>
-      <input class="inp cent" placeholder="Имя">
-      <input class="inp cent" type="email" placeholder="Почта">
-      <input class="inp cent" type="password" placeholder="Пароль">
-      <input class="inp cent" type="password" placeholder="Повторите пароль">
+      <input v-model="username" class="inp cent" placeholder="Имя">
+      <input v-model="email" class="inp cent" type="email" placeholder="Почта">
+      <input v-model="password" class="inp cent" type="password" placeholder="Пароль">
+      <input v-model="pass_password" class="inp cent" type="password" placeholder="Повторите пароль">
       <button @click="register" class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
-      <button @click="$router.go(-1)" class="btn cent btn__exit" type="reset">Отмена</button>
+      <button @click="$emit('exit')" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
@@ -15,13 +15,25 @@
 
 export default {
   name: "register",
-
-  methods: {
-    register(event) {
-      this.$router.push('/');
-      event.preventDefault();
+  data() {
+    return {
+      email: String = '',
+      username: String = '',
+      password: String = '',
+      pass_password: String = ''
     }
-  }
+  },
+  methods: {
+    register() {
+      if (this.email && this.password && this.username && this.password === this.pass_password) {
+        const form = new FormData();
+        form.set('email', this.email);
+        form.set('user', this.email);
+        form.set('password', this.email);
+        this.$emit('register');
+      }
+    }
+  },
 
 }
 </script>
@@ -46,6 +58,9 @@ export default {
   flex: none;
   order: 0;
   flex-grow: 0;
+}
+.waiting {
+  background-color: var(--color-waiting);
 }
 
 .cent{

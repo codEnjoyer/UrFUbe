@@ -1,7 +1,7 @@
 <template>
   <div>
   <Header @theme="change_theme" :is-authorised="true"/>
-  <router-view></router-view>
+  <router-view class="container"></router-view>
   </div>
 </template>
 
@@ -60,7 +60,9 @@ export default {
   --color-element: #FFFFFF;
   --color-text: #303030;
   --invert-light: invert(0%);
-  --background-color: #D9D9D9
+  --background-color: #D9D9D9;
+  --color-waiting: #FFB2B2;
+  --color-succses: #B2FFC8;
 }
 [data-theme="darkMode"] {
   --color-main: #303030;

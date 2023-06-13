@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import VideoGrid from "@/components/VideoGrid.vue";
 import RegistrationForm from "@/components/RegistrationForm.vue";
 import DialogWindow from "@/components/DialogWindow.vue";
+import VideoList from "@/components/VideoList.vue";
 
 
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
         component: RegistrationForm
     },
     {
-        path: '/search?:req'
+        path: '/search/:req',
+        component: VideoList
     },
     {
         path: '/register',

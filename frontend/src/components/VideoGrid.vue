@@ -2,12 +2,7 @@
   <div class="container">
     <video-promo
         v-for="video in videos"
-        :name="video.name"
-        :video_id="video.id"
-        :preview="video.preview"
-        :user_id="video.user_id"
-        :user_name="video.username"
-        :watches="video.watches"
+        :video="video"
         :key="video.id"
     />
   </div>
@@ -21,11 +16,13 @@ export default {
   components: {
     VideoPromo
   },
-  props: {
-    videos: {
-      type: Array,
-      required: true
+  data() {
+    return {
+      videos: Array
     }
+  },
+  mounted() {
+    this.videos().push({name: "aaaaa"})
   }
 }
 </script>

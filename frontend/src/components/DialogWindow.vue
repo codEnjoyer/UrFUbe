@@ -1,8 +1,9 @@
 <template>
   <div class="dialog">
     <div class="dialog__content">
-      <RegistrationForm v-if="$route.path === '/register'" />
-      <LoginForm v-if="$route.path === '/auth'" />
+      <RegistrationForm @register="register" @exit="exit" v-if="route_path === '/register'" />
+      <LoginForm v-if="route_path === '/auth'" @login="login" @exit="exit"/>
+      <UploadForm v-if="route_path === '/upload'" />
     </div>
   </div>
 </template>
@@ -10,12 +11,31 @@
 <script>
 import RegistrationForm from "@/components/RegistrationForm.vue";
 import LoginForm from "@/components/LoginForm.vue";
+import UploadForm from "@/components/UploadForm.vue";
+
 export default {
   components: {
     RegistrationForm,
-    LoginForm
+    LoginForm,
+    UploadForm
   },
-  name: 'dialog-window'
+  name: 'dialog-window',
+  methods: {
+    register(formData) {
+      this.$router.push('/');
+    },
+    exit() {
+      this.$router.go(-1);
+    },
+    login(formData) {
+      this.$router.push('/');
+    }
+  },
+  computed: {
+    route_path() {
+      return this.$route.path;
+    }
+  }
 }
 </script>
 
