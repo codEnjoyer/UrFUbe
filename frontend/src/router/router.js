@@ -1,7 +1,11 @@
 import {createRouter, createWebHistory} from "vue-router";
 import VideoGrid from "@/components/VideoGrid.vue";
-import RegistrationForm from "@/components/RegistrationForm.vue";
-import DialogWindow from "@/components/DialogWindow.vue";
+import RegistrationForm from "@/components/forms/RegistrationForm.vue";
+import VideoList from "@/components/VideoList.vue";
+import UploadForm from "@/components/forms/UploadForm.vue";
+import AccountPage from "@/components/AccountPage.vue";
+import VideoPage from "@/components/VideoPage.vue";
+import LoginForm from "@/components/forms/LoginForm.vue";
 
 
 const routes = [
@@ -10,23 +14,29 @@ const routes = [
         component: VideoGrid
     },
     {
-        path: '/account',
-        component: RegistrationForm
+        path: '/account/:user_id',
+        component: AccountPage
     },
     {
-        path: '/search?:req'
+        path: '/video/:video_id',
+        component: VideoPage
+    },
+    {
+        path: '/search/:req',
+        name: 'search',
+        component: VideoList
     },
     {
         path: '/register',
-        component: DialogWindow
+        component: RegistrationForm
     },
     {
         path: '/auth',
-        component: DialogWindow
+        component: LoginForm
     },
     {
         path: '/upload',
-        component: DialogWindow
+        component: UploadForm
     }
 ]
 
