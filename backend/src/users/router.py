@@ -5,12 +5,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette import status
 
+from auth.base_config import current_user
+from auth.models import User
 from auth.schemas import UserRead
 from database import get_async_session
 from users.crud import get_user
 from videos.router import get_videos_info, get_user_video_models
 
 router = APIRouter(prefix="/user", tags=["User"])
+
+
+@router.get("", status_code=status.HTTP_200_OK)
+async def get_current_user(user: Annotated[User, Depends(current_user)]) -> UserRead:
+    return UserRead(id=user.id,
+                    email=user.email,
+                    username=user.username,
+                    is_active=user.is_active,
+                    is_superuser=user.is_superuser,
+                    is_verified=user.is_verified)
 
 
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
