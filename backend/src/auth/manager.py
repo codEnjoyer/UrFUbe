@@ -12,7 +12,7 @@ from auth.schemas import UserCreate, UserRead
 from auth.models import User, get_user_db
 
 from config import RESET_PASSWORD_TOKEN, VERIFICATION_TOKEN, BUCKET_NAME
-from tasks.tasks import send_welcome_email
+from utils.mail import send_welcome_email
 
 session = boto3.session.Session()
 s3 = session.client(
