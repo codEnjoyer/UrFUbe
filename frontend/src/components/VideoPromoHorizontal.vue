@@ -26,14 +26,6 @@ export default {
   data() {
     return {
       pre: require('../assets/video/default_preview.png'),
-      video: {
-        preview: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png",
-        name: "asdaaaaaaaaaaaaaaaaaaaaaaaaaaaa asdaaaaaaaaask askdasdaskdk askdkaskd",
-        username: 'jsdfjsdjfsjdf jsdfjsdjfjsdfj sdjfsjdfjsj dsjfjsdfj jsdjfsjdf j',
-        watches: 100000000,
-        video_id: 0,
-        user_id: 0
-      }
     }
   },
   mounted() {

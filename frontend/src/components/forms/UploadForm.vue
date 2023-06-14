@@ -4,17 +4,17 @@
     <div class="input-file-row input-file">
       <div class="file__container">
         <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mvk">
-        <span>{{video.name}}</span>
+        <span>{{object.video_file.name}}</span>
       </div>
       <div class="file__container pre">
         <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
-        <span>{{preview.name}}</span>
+        <span>{{object.preview_file.name}}</span>
       </div>
     </div>
     <span style="color: var(--color-waiting)">{{error}}</span>
     <div class="input-file-column">
-      <input v-model="name" class="inp" type="text" placeholder="Название видео">
-      <textarea v-model="description" class="inp" type="text" placeholder="Описание" />
+      <input v-model="object.name" class="inp" type="text" placeholder="Название видео">
+      <textarea v-model="object.description" class="inp" type="text" placeholder="Описание" />
     </div>
     <div class="input-file-row">
       <button @click="$router.go(-1)" class="btn cent btn__exit">Отмена</button>
@@ -24,32 +24,43 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
 export default {
   name: "UploadForm",
   data() {
     return {
-      preview: Image,
-      video: File,
-      name: '',
-      description: '',
+      object: {
+        preview_file: Image,
+        video_file: File,
+        name: '',
+        description: '',
+      },
       error: ''
     }
   },
   methods: {
     upload_video() {
-      if (this.video && this.name) {
-        //TODO: postVideo
+      if (this.object.video_file && this.object.name) {
+        let form = new FormData();
+        form.append('name', this.object.name)
+        form.append('description', this.object.description)
+        form.append('video_file', this.object.video_file)
+        form.append('preview_file', this.object.preview_file)
+        this.upload()
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
     },
+    ...mapActions([
+        'upload'
+      ]),
     check() {
       let video = this.$refs.video.files[0];
       let preview = this.$refs.preview.files[0];
       if (video)
-        this.video = video
+        this.object.video_file = video
       if (preview)
-        this.preview = preview
+        this.object.preview_file = preview
     }
   }
 }

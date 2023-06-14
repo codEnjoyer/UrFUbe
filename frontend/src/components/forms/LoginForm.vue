@@ -5,7 +5,7 @@
       <input v-model="email" class="inp cent" type="email" placeholder="Почта">
       <input v-model="password" class="inp cent" type="password" placeholder="Пароль">
       <button @click="login" class="btn cent btn__submit" type="submit">Войти</button>
-      <button @click="$emit('exit')" class="btn cent btn__exit" type="reset">Отмена</button>
+      <button @click="$router.push('/')" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
@@ -17,10 +17,10 @@ export default {
   methods: {
     login() {
       if (this.email && this.password) {
+        //TODO: login post
         const form = new FormData();
         form.set('email', this.email);
         form.set('password', this.password);
-        this.$emit('login', form)
       }
     }
   },

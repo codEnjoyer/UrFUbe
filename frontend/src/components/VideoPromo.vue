@@ -28,8 +28,7 @@ export default {
   },
   mounted() {
     this.pre = this.video.preview;
-  },
-  methods: {  }
+  }
 }
 </script>
 

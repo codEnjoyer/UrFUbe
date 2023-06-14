@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted() {
-    this.videos().push({name: "aaaaa"})
+    //TODO: get videos
   }
 }
 </script>
