@@ -45,30 +45,35 @@ async def get_presigned_url(file_name: str):
     return response
 
 
-# TODO(codEnjoyer): Предлагаю заменить preview_file: UploadFile = File() на preview_file: UploadFile | None = None
-# а user: User = Depends(current_user) на user: Annotated[User, Depends(current_user)]
+# TODO(codEnjoyer): Предлагаю заменить user: User = Depends(current_user) на user: Annotated[User, Depends(current_user)]
 @router.post("/upload")
-async def upload(name: str, description: str,
+async def upload(name: str, description: str = None,
                  video_file: UploadFile = File(),
-                 preview_file: UploadFile = File(),
+                 preview_file: UploadFile | None = None,
                  user: User = Depends(current_user),
                  async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     if not any(video_file.filename.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file type")
     if video_file.size > MAX_VIDEO_SIZE:
         raise HTTPException(status_code=400, detail=f"Invalid file size - {video_file.size / 1024 / 1024} mb")
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video", Config=transfer_config)
-    s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview", Config=transfer_config)
-    return await upload_video_db(async_session, user.id, name, description)
+    video_extension = video_file.filename.split(".")[-1]
+    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video.{video_extension}", Config=transfer_config)
+    preview_extension = None
+    if preview_file is not None:
+        s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview", Config=transfer_config)
+        preview_extension = preview_file.filename.split(".")[-1]
+    return await upload_video_db(async_session, user.id, name,
+                                 description, preview_file is not None,
+                                 video_extension, preview_extension)
 
 
-@router.post("/reaction")
+@router.post("/{video_id}/reaction")
 async def post_reaction(video_id: int, reaction_type: ReactionType,
                         user: User = Depends(current_user),
                         async_session: AsyncSession = Depends(get_async_session)) -> ReactionRead:
     reaction = await async_session.scalar(
         select(Reaction).where((user.id == Reaction.user_id) & (video_id == Reaction.video_id)))
-    video = await get_user_video_model_with_id(async_session, video_id)
+    video = await get_video_with_id(async_session, video_id)
     if reaction:
         video.add_reaction(ReactionType(reaction.reaction_type_id), -1)
         await async_session.delete(reaction)
@@ -84,7 +89,7 @@ async def post_reaction(video_id: int, reaction_type: ReactionType,
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
 
 
-@router.post("/post_comment")
+@router.post("/{video_id}/comment/post")
 async def post_comment(video_id: int, text: str,
                        user: User = Depends(current_user),
                        async_session: AsyncSession = Depends(get_async_session)) -> CommentRead:
@@ -94,31 +99,42 @@ async def post_comment(video_id: int, text: str,
     return get_comment_info(comment)
 
 
-@router.get('/comments')
-async def get_comments_by_video_id(video_id: int, count: int = 5, offset: int = 0,
-                                   db_session: AsyncSession = Depends(get_async_session)) -> List[CommentRead]:
-    comments = await db_session.scalars(
+@router.get('/{video_id}')
+async def get_video(video_id: int,
+                    async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
+    video = await get_video_with_id(async_session, video_id)
+    if current_user is not None:
+        stmt = update(Video).where(Video.id == video_id).values(count_views=video.count_views + 1)
+        await async_session.execute(stmt)
+        await async_session.commit()
+    return await get_video_info(video)
+
+
+@router.get('{video_id}/comments')
+async def get_comments(video_id: int, count: int = 5, offset: int = 0,
+                       async_session: AsyncSession = Depends(get_async_session)) -> List[CommentRead]:
+    comments = await async_session.scalars(
         select(Comment).where(Comment.video_id == video_id).offset(offset).limit(count))
     return get_comments_info(comments)
 
 
-@router.get("/get_my_videos")
-async def get_my_videos(count: int = 5,
+@router.get("/user/my_video")
+async def get_my_videos(limit: int = 5, offset: int = 0,
                         user: User = Depends(current_user),
                         async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
-    videos = await get_user_video_models(async_session, user.id, count)
+    videos = await get_user_video_models(async_session, user.id, offset, limit)
     return await get_videos_info(videos)
 
 
-@router.get("/get_videos")
-async def get_videos(user_id: int, count: int = 5,
+@router.get("/user/{user_id}")
+async def get_videos(user_id: int, limit: int = 5, offset: int = 0,
                      async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
-    videos = await get_user_video_models(async_session, user_id, count)
+    videos = await get_user_video_models(async_session, user_id, offset, limit)
     return await get_videos_info(videos)
 
 
-@router.get("/reaction_videos")
-async def get_reaction_videos(count: int, offset: int,
+@router.get("/video/video_with_reaction")
+async def get_reaction_videos(limit: int, offset: int,
                               reaction_type: ReactionType,
                               user: User = Depends(current_user),
                               async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
@@ -126,15 +142,15 @@ async def get_reaction_videos(count: int, offset: int,
         select(Video)
         .join(Reaction)
         .where((Reaction.user_id == user.id) & (Reaction.reaction_type_id == int(reaction_type)))
-        .offset(offset).limit(count))
+        .offset(offset).limit(limit))
     return await get_videos_info(liked_videos)
 
 
-@router.delete("/delete/{video_id}")
+@router.delete("/remove/{video_id}")
 async def delete_video(video_id: int,
                        user: User = Depends(current_user),
                        async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
-    video = await get_user_video_model_with_id(async_session, video_id)
+    video = await get_video_with_id(async_session, video_id)
     if video is None:
         raise HTTPException(status_code=404, detail="Video not found")
     if video.user_id != user.id:
@@ -145,7 +161,22 @@ async def delete_video(video_id: int,
     return await get_video_info(video)
 
 
-async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int) -> Video:
+@router.delete("/{video_id}/comment/{comment_id}")
+async def delete_comment(video_id: int, comment_id: int,
+                         user: User = Depends(current_user),
+                         async_session: AsyncSession = Depends(get_async_session)) -> CommentRead:
+    video = await get_video_with_id(async_session, video_id)
+    if video is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    comment = await async_session.scalar(select(Comment).where(Comment.id == comment_id))
+    if comment.user_id != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    await async_session.delete(comment)
+    await async_session.commit()
+    return get_comment_info(comment)
+
+
+async def get_video_with_id(async_session: AsyncSession, video_id: int) -> Video:
     stmt = select(Video).filter(Video.id == video_id)
     video = await async_session.scalar(stmt)
     return video
@@ -222,13 +253,15 @@ def get_comment_info(comment: Comment) -> CommentRead:
                        create_at=comment.create_at)
 
 
-async def upload_video_db(async_session: AsyncSession, user_id: int, name: str, description: str) -> VideoRead:
+async def upload_video_db(async_session: AsyncSession, user_id: int,
+                          name: str, description: str, is_have_preview: bool,
+                          video_ext: str, preview_ext: str) -> VideoRead:
     try:
         video = Video(
             name=name,
-            description=description,
-            video_url=f"{user_id}/{name}/video",
-            preview_url=f"{user_id}/{name}/preview",
+            description=description if description is not None else "",
+            video_url=f"{user_id}/{name}/video.{video_ext}",
+            preview_url=f"{user_id}/{name}/preview.{preview_ext}" if is_have_preview else f"default_preview.jpeg",
             user_id=user_id
         )
         async_session.add(video)
