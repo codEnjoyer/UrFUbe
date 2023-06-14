@@ -7,10 +7,19 @@ from enum import IntEnum
 # WARNING: Не удалять импорт User'а
 from auth.models import User
 
+
 class ReactionType(IntEnum):
     like = 0
     dislike = 1
     facepalm = 2
+
+
+class VideoSortType(IntEnum):
+    count_reactions = 1
+    count_likes = 2
+    count_dislikes = 3
+    count_views = 4
+    upload_at = 5
 
 
 class Video(Base):

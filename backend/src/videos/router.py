@@ -11,7 +11,7 @@ from database import get_async_session
 import boto3
 from boto3.s3.transfer import TransferConfig
 from auth.models import User
-from videos.models import Video, Reaction, ReactionType, Comment
+from videos.models import Video, Reaction, ReactionType, Comment, VideoSortType
 from auth.base_config import current_user
 from videos.sсhemas import VideoRead, ReactionRead, CommentRead
 
@@ -146,32 +146,43 @@ async def delete_video(video_id: int,
 
 
 async def get_user_video_model_with_id(async_session: AsyncSession, video_id: int) -> Video:
-    try:
-        stmt = select(Video).filter(Video.id == video_id)
-        video = await async_session.scalar(stmt)
-        return video
-    except Exception as e:
-        await async_session.rollback()
-        raise e
-    finally:
-        await async_session.close()
+    stmt = select(Video).filter(Video.id == video_id)
+    video = await async_session.scalar(stmt)
+    return video
 
 
-async def get_user_video_models(async_session: AsyncSession, user_id: int, count: int = 5) -> List[Video]:
-    try:
-        stmt = select(Video).filter(Video.user_id == user_id).limit(count)
-        if count == 1:
-            videos = await async_session.scalar(stmt)
-        else:
-            videos = await async_session.scalars(stmt)
-        if videos is None:
-            videos = []
-        return videos
-    except Exception as e:
-        await async_session.rollback()
-        raise e
-    finally:
-        await async_session.close()
+async def get_user_video_models(async_session: AsyncSession, user_id: int,
+                                offset: int = 0, limit: int = 15) -> List[Video]:
+    stmt = select(Video).filter(Video.user_id == user_id).offset(offset).limit(limit)
+    videos = await async_session.scalars(stmt)
+    if videos is None:
+        videos = []
+    return videos
+
+
+async def get_last_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15):
+    return await get_video_models(async_session, offset, limit, VideoSortType.count_likes)
+
+
+async def get_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15,
+                           sort_parameter: VideoSortType = VideoSortType.count_reactions):
+    sort_parameter_video = get_sort_parameter(sort_parameter)
+    stmt = select(Video).order_by(sort_parameter_video.desc()).offset(offset).limit(limit)
+    videos = await async_session.scalars(stmt)
+    return await get_videos_info(videos)
+
+
+def get_sort_parameter(sort_parameter: VideoSortType):
+    if sort_parameter == VideoSortType.count_reactions:
+        return Video.reaction
+    elif sort_parameter == VideoSortType.count_likes:
+        return Video.count_likes
+    elif sort_parameter == VideoSortType.count_dislikes:
+        return Video.count_dislikes
+    elif sort_parameter == VideoSortType.count_views:
+        return Video.count_views
+    elif sort_parameter == VideoSortType.upload_at:
+        return Video.uploaded_at
 
 
 async def get_videos_info(videos: List[Video]) -> List[VideoRead]:
