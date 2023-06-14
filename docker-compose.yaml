@@ -17,21 +17,22 @@ services:
   backend:
     container_name: fastapi_app
     restart: unless-stopped
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./backend/Dockerfile
     env_file:
       - .env
-    entrypoint: [ "sh", "/fastapi_app/backend/docker/app.sh" ]
+#    entrypoint: [ "sh", "/fastapi_app/backend/docker/app.sh" ]
     ports:
       - "${BACK_APP_PORT}:${BACK_APP_PORT}"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
-      interval: 3s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      - db
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
+#      interval: 3s
+#      timeout: 10s
+#      retries: 5
+#    depends_on:
+#      - db
 
   db:
     container_name: db_app

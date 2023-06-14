@@ -12,7 +12,7 @@ def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(secret=SECRET_KEY_JWT, lifetime_seconds=60 * 60)
 
 
-cookie_transport = CookieTransport(cookie_name="bonds", cookie_max_age=60 * 60)
+cookie_transport = CookieTransport(cookie_name="untasty_and_tochka", cookie_max_age=60 * 60)
 
 auth_backend = AuthenticationBackend(
     name="jwt",
