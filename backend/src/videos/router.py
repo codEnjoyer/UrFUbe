@@ -1,15 +1,15 @@
 import logging
 from typing import List
-
+import boto3
+from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.expression import func
 
 from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from database import get_async_session
-import boto3
-from boto3.s3.transfer import TransferConfig
 from auth.models import User
 from videos.models import Video, Reaction, ReactionType, Comment, VideoSortType
 from auth.base_config import current_user
@@ -97,6 +97,15 @@ async def post_comment(video_id: int, text: str,
     async_session.add(comment)
     await async_session.commit()
     return get_comment_info(comment)
+
+
+@router.get('/search')
+async def get_video_by_name(name: str, offset: int = 0, limit: int = 15,
+                            async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
+    stmt = select(Video).filter(func.levenshtein(Video.name, name) <= 2).offset(offset).limit(limit)
+    result = await async_session.execute(stmt)
+    videos = result.scalars().all()
+    return await get_videos_info(videos)
 
 
 @router.get('/{video_id}')
