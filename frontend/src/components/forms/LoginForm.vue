@@ -12,7 +12,7 @@
 <script>
 
 export default {
-  name: "register",
+  name: "LoginForm",
 
   methods: {
     login() {
@@ -26,8 +26,8 @@ export default {
   },
   data() {
     return {
-      email: String = "",
-      password: String = ""
+      email: "",
+      password: ""
     }
   }
 

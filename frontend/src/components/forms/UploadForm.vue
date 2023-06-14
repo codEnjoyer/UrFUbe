@@ -30,8 +30,8 @@ export default {
     return {
       preview: Image,
       video: File,
-      name: String = '',
-      description: String = '',
+      name: '',
+      description: '',
       error: ''
     }
   },

@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import VideoGrid from "@/components/VideoGrid.vue";
 import RegistrationForm from "@/components/forms/RegistrationForm.vue";
-import DialogWindow from "@/components/DialogWindow.vue";
 import VideoList from "@/components/VideoList.vue";
 import UploadForm from "@/components/forms/UploadForm.vue";
 import AccountPage from "@/components/AccountPage.vue";
