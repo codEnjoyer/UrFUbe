@@ -45,7 +45,6 @@ async def get_presigned_url(file_name: str):
     return response
 
 
-# TODO(codEnjoyer): Предлагаю заменить user: User = Depends(current_user) на user: Annotated[User, Depends(current_user)]
 @router.post("/upload")
 async def upload(name: str, description: str = None,
                  video_file: UploadFile = File(),
@@ -88,8 +87,8 @@ async def post_reaction(video_id: int, reaction_type: ReactionType,
     await async_session.commit()
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
 
-# TODO: Предлагаю убрать /post из пути
-@router.post("/{video_id}/comment/post")
+
+@router.post("/{video_id}/comment/")
 async def post_comment(video_id: int, text: str,
                        user: User = Depends(current_user),
                        async_session: AsyncSession = Depends(get_async_session)) -> CommentRead:
@@ -102,7 +101,11 @@ async def post_comment(video_id: int, text: str,
 @router.get('/search')
 async def get_video_by_name(name: str, offset: int = 0, limit: int = 15,
                             async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
-    stmt = select(Video).filter(func.levenshtein(Video.name, name) <= 2).offset(offset).limit(limit)
+    levenshtein_distance = len(name) // 3
+    stmt = (select(Video)
+            .filter((func.levenshtein(Video.name, name) <= levenshtein_distance) | (Video.name.ilike(f"%{name}%")))
+            .offset(offset)
+            .limit(limit))
     result = await async_session.execute(stmt)
     videos = result.scalars().all()
     return await get_videos_info(videos)
@@ -118,8 +121,8 @@ async def get_video(video_id: int,
         await async_session.commit()
     return await get_video_info(video)
 
-# TODO: Не хватает слеша в самом начале
-@router.get('{video_id}/comments')
+
+@router.get('/{video_id}/comments')
 async def get_comments(video_id: int, count: int = 5, offset: int = 0,
                        async_session: AsyncSession = Depends(get_async_session)) -> List[CommentRead]:
     comments = await async_session.scalars(
@@ -127,7 +130,7 @@ async def get_comments(video_id: int, count: int = 5, offset: int = 0,
     return get_comments_info(comments)
 
 
-@router.get("/user/my_video")
+@router.get("/user/my")
 async def get_my_videos(limit: int = 5, offset: int = 0,
                         user: User = Depends(current_user),
                         async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
@@ -141,11 +144,11 @@ async def get_videos(user_id: int, limit: int = 5, offset: int = 0,
     videos = await get_user_video_models(async_session, user_id, offset, limit)
     return await get_videos_info(videos)
 
-# TODO: Надо убрать /video из пути и эндпоинт, мне кажется, поменять на /reaction
-# TODO: И лимиту и оффсету надо значения по-умолчанию задать
-@router.get("/video/video_with_reaction")
-async def get_reaction_videos(limit: int, offset: int,
-                              reaction_type: ReactionType,
+
+@router.get("/reacted")
+async def get_reaction_videos(offset: int = 0,
+                              limit: int = 15,
+                              reaction_type: ReactionType = ReactionType.like,
                               user: User = Depends(current_user),
                               async_session: AsyncSession = Depends(get_async_session)) -> List[VideoRead]:
     liked_videos = await async_session.scalars(
@@ -191,7 +194,7 @@ async def get_video_with_id(async_session: AsyncSession, video_id: int) -> Video
     video = await async_session.scalar(stmt)
     return video
 
-# TODO: Почему тут используется filter, а не where?
+
 async def get_user_video_models(async_session: AsyncSession, user_id: int,
                                 offset: int = 0, limit: int = 15) -> List[Video]:
     stmt = select(Video).filter(Video.user_id == user_id).offset(offset).limit(limit)
@@ -204,19 +207,23 @@ async def get_user_video_models(async_session: AsyncSession, user_id: int,
 async def get_last_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15):
     return await get_video_models(async_session, offset, limit, VideoSortType.count_likes)
 
-# TODO: Предлагаю добавить второй параметр сортировки по возрастанию времени, чтоб при равном количестве реакций они
-# выводились в хронологическом порядке (возможно это уже есть из-за того, что id у нас автоинкрементный)
+
 async def get_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15,
                            sort_parameter: VideoSortType = VideoSortType.count_reactions):
-    sort_parameter_video = get_sort_parameter(sort_parameter)
-    stmt = select(Video).order_by(sort_parameter_video.desc()).offset(offset).limit(limit)
+    reactions = get_sort_parameter(sort_parameter)
+    upload_time = get_sort_parameter(VideoSortType.upload_at)
+    stmt = (select(Video)
+            .order_by(reactions.desc())
+            .order_by(upload_time.desc())
+            .offset(offset)
+            .limit(limit))
     videos = await async_session.scalars(stmt)
     return await get_videos_info(videos)
 
 
 def get_sort_parameter(sort_parameter: VideoSortType):
     if sort_parameter == VideoSortType.count_reactions:
-        return Video.reaction
+        return Video.count_reactions
     elif sort_parameter == VideoSortType.count_likes:
         return Video.count_likes
     elif sort_parameter == VideoSortType.count_dislikes:
