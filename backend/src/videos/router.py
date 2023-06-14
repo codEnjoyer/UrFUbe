@@ -88,7 +88,7 @@ async def post_reaction(video_id: int, reaction_type: ReactionType,
     await async_session.commit()
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
 
-
+# TODO: Предлагаю убрать /post из пути
 @router.post("/{video_id}/comment/post")
 async def post_comment(video_id: int, text: str,
                        user: User = Depends(current_user),
@@ -118,7 +118,7 @@ async def get_video(video_id: int,
         await async_session.commit()
     return await get_video_info(video)
 
-
+# TODO: Не хватает слеша в самом начале
 @router.get('{video_id}/comments')
 async def get_comments(video_id: int, count: int = 5, offset: int = 0,
                        async_session: AsyncSession = Depends(get_async_session)) -> List[CommentRead]:
@@ -141,7 +141,8 @@ async def get_videos(user_id: int, limit: int = 5, offset: int = 0,
     videos = await get_user_video_models(async_session, user_id, offset, limit)
     return await get_videos_info(videos)
 
-
+# TODO: Надо убрать /video из пути и эндпоинт, мне кажется, поменять на /reaction
+# TODO: И лимиту и оффсету надо значения по-умолчанию задать
 @router.get("/video/video_with_reaction")
 async def get_reaction_videos(limit: int, offset: int,
                               reaction_type: ReactionType,
@@ -203,7 +204,8 @@ async def get_user_video_models(async_session: AsyncSession, user_id: int,
 async def get_last_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15):
     return await get_video_models(async_session, offset, limit, VideoSortType.count_likes)
 
-
+# TODO: Предлагаю добавить второй параметр сортировки по возрастанию времени, чтоб при равном количестве реакций они
+# выводились в хронологическом порядке (возможно это уже есть из-за того, что id у нас автоинкрементный)
 async def get_video_models(async_session: AsyncSession, offset: int = 0, limit: int = 15,
                            sort_parameter: VideoSortType = VideoSortType.count_reactions):
     sort_parameter_video = get_sort_parameter(sort_parameter)
