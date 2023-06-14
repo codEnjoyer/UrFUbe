@@ -70,13 +70,15 @@ async def post_reaction(video_id: int, reaction_type: ReactionType,
         select(Reaction).where((user.id == Reaction.user_id) & (video_id == Reaction.video_id)))
     video = await get_user_video_model_with_id(async_session, video_id)
     if reaction:
-        video.count_reactions -= 1
+        video.add_reaction(ReactionType(reaction.reaction_type_id), -1)
         await async_session.delete(reaction)
-    else:
+    if not reaction or reaction.reaction_type_id != int(reaction_type):
         reaction = Reaction(video_id=video_id, user_id=user.id, reaction_type_id=int(reaction_type))
-        video.count_reactions += 1
+        video.add_reaction(reaction_type, 1)
         async_session.add(reaction)
-    stmt = (update(Video).where(Video.id == video.id).values(count_reactions=video.count_reactions))
+    stmt = update(Video).where(Video.id == video.id).values(count_reactions=video.count_reactions,
+                                                            count_likes=video.count_likes,
+                                                            count_dislikes=video.count_dislikes)
     await async_session.execute(stmt)
     await async_session.commit()
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
@@ -190,6 +192,8 @@ async def get_video_info(video: Video) -> VideoRead:
                      video_url=video_url,
                      preview_url=preview_url,
                      count_reactions=video.count_reactions,
+                     count_likes=video.count_likes,
+                     count_dislikes=video.count_dislikes,
                      upload_at=video.uploaded_at)
 
 
