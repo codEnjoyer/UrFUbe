@@ -1,7 +1,7 @@
 <template>
   <div>
   <Header @theme="change_theme" :is-authorised="true"/>
-  <router-view class="container"></router-view>
+  <router-view></router-view>
   </div>
 </template>
 

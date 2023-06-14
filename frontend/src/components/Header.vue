@@ -5,8 +5,8 @@
         <router-link to="/" class="navbar-brand">UrFUbe</router-link>
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
-            <input placeholder="Поиск" v-model="search_request" aria-label="Search">
-            <a to="search" class="btn" @click="search">
+            <input key="search_input" placeholder="Поиск" v-model="search_request" aria-label="Search">
+            <a class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
             </a>
           </form>
@@ -59,8 +59,9 @@ export default {
   methods: {
     search() {
       if (this.search_request !== '') {
-        this.$router.push('/search/' + this.search_request)
+        let req = this.search_request;
         this.search_request = '';
+        this.$router.push(encodeURI('/search/' + req))
       }
     },
     change_theme() {

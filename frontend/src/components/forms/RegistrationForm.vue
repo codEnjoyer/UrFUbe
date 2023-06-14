@@ -2,12 +2,12 @@
     <div>
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Регистрация</h2>
-      <input v-model="username" class="inp cent" placeholder="Имя">
-      <input v-model="email" class="inp cent" type="email" placeholder="Почта">
-      <input v-model="password" class="inp cent" type="password" placeholder="Пароль">
-      <input v-model="pass_password" class="inp cent" type="password" placeholder="Повторите пароль">
-      <button @click="register" class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
-      <button @click="$emit('exit')" class="btn cent btn__exit" type="reset">Отмена</button>
+      <input key="username_input" v-model="username" class="inp cent" placeholder="Имя">
+      <input key="email_input" v-model="email" class="inp cent" type="email" placeholder="Почта">
+      <input key="password_input" v-model="password" class="inp cent" type="password" placeholder="Пароль">
+      <input key="passpass_input" v-model="pass_password" class="inp cent" type="password" placeholder="Повторите пароль">
+      <button class="btn cent btn__submit" type="submit">Зарегистрироваться</button>
+      <button key="reset_register"  @click="$router.go(-1)" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
@@ -30,7 +30,6 @@ export default {
         form.set('email', this.email);
         form.set('user', this.email);
         form.set('password', this.email);
-        this.$emit('register');
       }
     }
   },
