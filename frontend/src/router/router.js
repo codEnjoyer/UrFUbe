@@ -6,6 +6,7 @@ import VideoList from "@/components/VideoList.vue";
 import UploadForm from "@/components/forms/UploadForm.vue";
 import AccountPage from "@/components/AccountPage.vue";
 import VideoPage from "@/components/VideoPage.vue";
+import LoginForm from "@/components/forms/LoginForm.vue";
 
 
 const routes = [
@@ -23,15 +24,16 @@ const routes = [
     },
     {
         path: '/search/:req',
+        name: 'search',
         component: VideoList
     },
     {
         path: '/register',
-        component: DialogWindow
+        component: RegistrationForm
     },
     {
         path: '/auth',
-        component: DialogWindow
+        component: LoginForm
     },
     {
         path: '/upload',
