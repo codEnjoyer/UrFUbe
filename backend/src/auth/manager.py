@@ -56,13 +56,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             else user_create.create_update_dict_superuser()
         )
         password = user_dict.pop("password")
-        # user_dict["id"] = 12
         user_dict["hashed_password"] = self.password_helper.hash(password)
-
         created_user = await self.user_db.create(user_dict)
-
         await self.on_after_register(created_user, request)
-
         return created_user
 
     async def validate_password(
@@ -70,9 +66,10 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             password: str,
             user: UserCreate | User,
     ) -> None:
-        if len(password) < 8:
+        should_password_len = 8
+        if len(password) < should_password_len:
             raise InvalidPasswordException(
-                reason="Password should be at least 8 characters"
+                reason=f"Password should be at least {should_password_len} characters"
             )
         if user.email in password:
             raise InvalidPasswordException(

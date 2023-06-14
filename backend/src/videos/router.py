@@ -191,7 +191,7 @@ async def get_video_with_id(async_session: AsyncSession, video_id: int) -> Video
     video = await async_session.scalar(stmt)
     return video
 
-
+# TODO: Почему тут используется filter, а не where?
 async def get_user_video_models(async_session: AsyncSession, user_id: int,
                                 offset: int = 0, limit: int = 15) -> List[Video]:
     stmt = select(Video).filter(Video.user_id == user_id).offset(offset).limit(limit)

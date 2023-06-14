@@ -5,7 +5,7 @@ from starlette import status
 from auth.router import router as auth_router
 from database import get_async_session
 
-from tasks.router import router as tasks_router
+from users.router import router as user_router
 from videos.router import router as video_router, get_last_video_models
 from utils.router import router as utils_router
 
@@ -31,7 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(tasks_router)
+app.include_router(user_router)
 app.include_router(video_router)
 app.include_router(utils_router)
 
