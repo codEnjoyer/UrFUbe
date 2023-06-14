@@ -16,6 +16,7 @@ services:
 
   backend:
     container_name: fastapi_app
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -26,7 +27,7 @@ services:
       - "${BACK_APP_PORT}:${BACK_APP_PORT}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
-      interval: 5s
+      interval: 3s
       timeout: 10s
       retries: 5
     depends_on:
@@ -37,16 +38,20 @@ services:
     image: postgres:15
     env_file:
       - .env
+    environment:
+      PG_DATA: "/var/lib/postgresql/data/pgdata"
     ports:
       - "${DB_PORT}:${DB_PORT}"
     command: [ "-p", "${DB_PORT}" ]
-    #TODO: Написать рабочий healthcheck
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+#
 #    healthcheck:
-#      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'" ]
-#      interval: 3s
+#      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+#      interval: 5s
 #      timeout: 10s
 #      retries: 5
-
   #  broker:
   #    container_name: rabbitmq_app
   #    build:
@@ -132,8 +137,10 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      backend:
-#        condition: service_healthy
+    depends_on:
+      backend:
+        condition: service_healthy
+
+
+volumes:
+  db-data:
