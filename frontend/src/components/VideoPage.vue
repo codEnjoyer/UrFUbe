@@ -1,6 +1,6 @@
 <template>
-  <video>
-    <source>
+  <video :key="video.file">
+    <source :src="video.file">
   </video>
   <div class="video__text">
       <div>
@@ -24,6 +24,10 @@ export default {
 
       }
     }
+  },
+  mounted() {
+    // TODO: getVideo
+    this.video.file = "https://drive.google.com/file/d/1sF52C2yzqb1ri7AamkmRZGpz4iyHy1UC/view?usp=sharing"
   }
 }
 </script>
