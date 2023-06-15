@@ -1,13 +1,12 @@
 <template>
-  <div class="list">
+  <div class="list__video">
     <h1 class="label" v-if="$route.params.req">Видео по запросу: "{{$route.params.req}}"</h1>
-    <div class="container">
+    <div class="container" v-if="videos!==null">
       <video-promo-horizontal
           v-for="video in videos"
           :video="video"
           :key="video.id"
       />
-      <video-promo-horizontal />
     </div>
   </div>
 </template>
@@ -26,9 +25,16 @@ export default {
     }
   },
   props: {
-    video_arr: { type: Array, required: true },
-
+    video_arr: { type: Array, required: false }
+  },
+  mounted() {
+    if (this.video_arr) {
+      this.videos = [...video_arr];
+    } else {
+      //TODO: get search
+    }
   }
+
 }
 </script>
 
@@ -57,8 +63,9 @@ export default {
 
   color: var(--color-text);
 }
-.list {
+.list__video {
   width: 80%;
-  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

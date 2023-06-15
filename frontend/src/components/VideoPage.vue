@@ -30,11 +30,6 @@ export default {
   },
   mounted() {
     // TODO: getVideo
-    this.video.file = "https://joy1.videvo.net/videvo_files/video/free/2013-08/large_watermarked/hd0992_preview.mp4";
-    this.$refs.videoPlayer.parentElement.src = this.video.file;
-    this.video.username = 'asdasda asda s asda'
-    this.video.name = "sdasad asd asd as da sd asd "
-    this.video.description = 'dssjfsjfjsjdfj sd fsjdfjsdfjsdjfjsdjfsjdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
   }
 }
 </script>

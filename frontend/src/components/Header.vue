@@ -10,14 +10,14 @@
               <img class="icon-light" src="../assets/header/loupe.png">
             </a>
           </form>
-          <router-link to="/upload" class="nav-link nav-item" aria-current="page" v-if="is_authorised">
+          <router-link to="/upload" class="nav-link nav-item" aria-current="page" v-if="$store.getters.is_authorised">
             <img class="icon-light" src="../assets/header/upload.png">
           </router-link>
           <div class="nav-item dropdown">
             <a data-bs-toggle="dropdown" aria-expanded="false">
               <img class="icon-light" src="../assets/header/account.png">
             </a>
-            <ul class="dropdown-menu" v-if="!is_authorised">
+            <ul class="dropdown-menu" v-if="!$store.getters.is_authorised">
               <li>
                 <router-link to="/register" class="dropdown-item btn">Регистрация</router-link>
               </li>
@@ -45,30 +45,26 @@
 <script>
 export default {
   name: "Header",
-  props: {
-    is_authorised: {
-      type: Boolean,
-      default: false
-    }
-  }, data() {
+  data() {
     return {
-      search_request: '',
-      main_theme: true
+      search_request: "",
+      main_theme: true,
+      is_authorised: false
     }
   },
   methods: {
     search() {
       if (this.search_request !== '') {
-        let req = this.search_request;
+        this.$router.push('/search/' + this.search_request)
+        //TODO: search
         this.search_request = '';
-        this.$router.push(encodeURI('/search/' + req))
       }
     },
     change_theme() {
       this.$emit('theme')
     },
-    logout() {
-      this.$emit('logout');
+    async logout() {
+      await this.$store.actions.logOut();
     }
   }
 }

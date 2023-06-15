@@ -13,8 +13,8 @@ axios.interceptors.response.use(undefined, function (error) {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      store.dispatch('logOut');
-      return router.push('/login')
+      store.dispatch('logout');
+      return router.push('/auth')
     }
   }
 });
@@ -24,7 +24,8 @@ app
     .use(store)
     .mount('#app')
 
-// axios.defaults.withCredentials = true;
-// axios.defaults.baseURL = 'http://localhost:${BACK_PORT}/';
+axios.defaults.withCredentials = true;
+//axios.defaults.baseURL = 'http://localhost:${BACK_PORT}/';
+axios.defaults.baseURL = 'http://localhost:8000/';
 
 import "bootstrap/dist/js/bootstrap.js"

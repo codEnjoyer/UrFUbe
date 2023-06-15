@@ -1,22 +1,41 @@
 <template>
   <div class="list">
     <div class="label_cont">
-      <h1>{{username}}</h1>
+      <h1>{{user.name}}</h1>
     </div>
-    <video-list />
+    <video-list :video_arr="user.videos" />
   </div>
 </template>
 
 <script>
 import VideoList from "@/components/VideoList.vue";
+import {mapActions} from "vuex";
+import users from "@/store/modules/users";
 
 export default {
   name: "AccountPage",
   components: {VideoList},
   data() {
     return {
-      username: "sadasdasd asdasd  sada sd asd   sdad a sasdasd asdasdasd asdasdasdasdasd asdasd asdasd asdasdasd asda sd asd asdd"
+      user: {
+        videos: Array,
+        username: ''
+      }
     }
+  },
+  async mounted() {
+    var id = this.$route.params.user_id;
+    if (id) {
+      this.user = await this.get_user(id);
+    } else {
+      this.user = await this.account_me();
+    }
+  },
+  methods: {
+    ...mapActions([
+        'account_me',
+        'get_user'
+      ]),
   }
 }
 </script>

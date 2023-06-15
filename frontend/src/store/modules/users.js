@@ -1,46 +1,60 @@
 import axios from 'axios';
 
 const state = {
-  user: null,
+  user: null
 };
 
 const getters = {
-  isAuthenticated: state => !!state.user,
-  stateUser: state => state.user,
+  is_authorised: state => !!state.user,
+  user: state => state.user,
 };
 
 const actions = {
-  async register({dispatch}, form) {
-    await axios.post('register', form);
-    let UserForm = new FormData();
-    UserForm.append('username', form.username);
-    UserForm.append('password', form.password);
-    await dispatch('logIn', UserForm);
+  async registration({dispatch}, json) {
+    await axios.post('auth/register', json, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+      }).catch((error) => {
+          if (error.status === 400)
+            return 'Пароль должен быть более 8 символов'
+        }).then(async (r) => {
+          console.log(json);
+          await dispatch('login', json);
+        })
   },
-  async logIn({dispatch}, user) {
-    await axios.post('login', user);
-    await dispatch('viewMe');
+  async login({commit}, json) {
+    await axios.post('auth/login', json, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+      }).then((response) => {
+              commit('set_auth', response.data.user);
+            }
+        );
   },
-  async viewMe({commit}) {
-    let {data} = await axios.get('me');
-    await commit('setUser', data);
+  async upload(form) {
+    await axios.post(`video/upload`, form);
   },
-  // eslint-disable-next-line no-empty-pattern
-  async deleteUser({}, id) {
-    await axios.delete(`user/${id}`);
+  async account_me({state}) {
+    let {data} = await axios.get(`user/${state.user.id}`);
+    return data;
+  },
+  async get_user({}, user_id) {
+    return await axios.get(`user/${user_id}`)
   },
   async logOut({commit}) {
-    let user = null;
-    commit('logout', user);
+    await axios.post('auth/logout');
+    commit('logout', null);
   }
 };
 
 const mutations = {
-  setUser(state, username) {
-    state.user = username;
-  },
-  logout(state, user){
+  set_auth(state, user) {
     state.user = user;
+  },
+  logout(state){
+    state.user = null;
   },
 };
 

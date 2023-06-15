@@ -2,37 +2,46 @@
     <div>
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Регистрация</h2>
-        <form action="">
-          <input key="username_input" v-model="username" class="inp cent" placeholder="Имя">
-          <input key="email_input" v-model="email" class="inp cent" type="email" placeholder="Почта">
-          <input key="password_input" v-model="password" class="inp cent" type="password" placeholder="Пароль">
-          <input key="passpass_input" v-model="pass_password" class="inp cent" type="password" placeholder="Повторите пароль">
-          <button class="btn cent btn__submit" @click="register" type="submit">Зарегистрироваться</button>
-        </form>
-      <button key="reset_register"  @click="$router.push('/')" class="btn cent btn__exit" type="reset">Отмена</button>
+        <div>
+          <input v-model="object.username" class="inp cent" placeholder="Имя">
+          <input v-model="object.email" class="inp cent" type="email" placeholder="Почта">
+          <input v-model="object.password" class="inp cent" type="password" placeholder="Пароль">
+          <input v-model="pass_password" class="inp cent" type="password" placeholder="Повторите пароль">
+          <span style="color: var(--color-waiting)">{{error}}</span>
+          <button class="btn cent btn__submit" @click="register">Зарегистрироваться</button>
+        </div>
+      <button @click="$router.push('/')" class="btn cent btn__exit">Отмена</button>
     </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
 
 export default {
   name: "RegistrationForm",
   data() {
     return {
-      email:  '',
-      username:  '',
-      password:  '',
-      pass_password:  ''
+      object: {
+        email:  '',
+        password:  '',
+        username: ''
+      },
+      error: '',
+      pass_password:  '',
     }
   },
   methods: {
+     ...mapActions([
+        'registration'
+      ]),
     register() {
-      if (this.email && this.password && this.username && this.password === this.pass_password) {
-        const form = new FormData();
-        form.set('email', this.email);
-        form.set('user', this.email);
-        form.set('password', this.email);
-        console.log(form);
+      if (this.object.email && this.object.password && this.object.username && this.object.password === this.pass_password) {
+        let obj = JSON.stringify(this.object);
+        this.registration(obj);
+      } else if (this.object.password !== this.pass_password) {
+        this.error = 'Пароль не совпадает'
+      } else {
+        this.error = 'Пожалуйста, заполните все поля'
       }
     }
   },
