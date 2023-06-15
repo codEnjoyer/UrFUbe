@@ -25,11 +25,11 @@ export default {
     }
   },
   props: {
-    video_arr: { type: Array, required: false }
+    video_arr: { type: Array, default: [] }
   },
   mounted() {
     if (this.video_arr) {
-      this.videos = [...video_arr];
+      this.videos = this.video_arr;
     } else {
       //TODO: get search
     }

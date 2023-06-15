@@ -21,7 +21,11 @@
 export default {
   name: "VideoPromoHorizontal",
   props: {
-    video: { type: Object, required: true }
+    video: { type: Object, default: {
+        user_id: 0,
+        watches: 0,
+        name: ""
+      } }
   },
   data() {
     return {

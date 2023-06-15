@@ -15,8 +15,6 @@ from config import FRONT_APP_PORT
 app = FastAPI(title='First FastAPI app')
 
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8000",
     f"http://localhost:{FRONT_APP_PORT}",

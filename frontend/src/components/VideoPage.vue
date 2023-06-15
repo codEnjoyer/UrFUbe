@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <video controls controlsList="nodownload" autoplay="autoplay" :key="video.id">
+    <video controls controlsList="nodownload" autoplay="autoplay">
       <source ref="videoPlayer" src="" type="video/*">
     </video>
     <div class="video__text">
@@ -10,18 +10,18 @@
       <div class="row__dir">
         <router-link :to="'/account/' + video.user_id" class="username">{{video.username}}</router-link>
         <div class="username" style="font-size: 16px">Просмотры: {{video.watches}}</div>
-        <div class="reactions row__dir">
+        <div v-if="$store.getters.is_authorised" class="reactions row__dir">
           <div class="column_dir">
             <button @click="add_like" class="btn likes">
               <img src="../assets/likes.png">
             </button>
-            <span style="margin-left: auto; margin-right: auto">{{video.likes}}</span>
+            <span style="margin-left: auto; margin-right: auto">{{video.count_likes}}</span>
           </div>
           <div class="column_dir">
             <button @click="add_dislike" class="btn dislikes">
               <img src="../assets/dislikes.png">
             </button>
-            <span style="margin-left: auto; margin-right: auto">{{video.dislikes}}</span>
+            <span style="margin-left: auto; margin-right: auto">{{video.count_dislikes}}</span>
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
         <p class="descr"> Описание: {{ video.description }}</p>
       </div>
       <div class="comments_container">
-        <div class="comment_form">
+        <div v-if="$store.getters.is_authorised" class="comment_form">
           <textarea class="inp" type="text" placeholder="Комментарий" />
           <div class="btn sub" @click="add_comment">
             <img class="icon-light" src="../assets/back.png" style="width: 32px">
@@ -37,7 +37,8 @@
         </div>
         <div class="comment_cont" v-for="com in comments">
           <hr>
-          <router-link :to="'/user/' + com.user_id" class="username">{{com.username}}</router-link>
+          <!--router-link :to="'/user/' + com.user_id" /-->
+          <div class="username">{{com.username}}</div>
           <p>{{com.text}}</p>
         </div>
       </div>
@@ -46,24 +47,31 @@
 </template>
 
 <script>
+import videos from "@/store/modules/videos";
+import {mapActions} from "vuex";
+
 export default {
   name: "VideoPage",
   data() {
     return {
       video: {
+        id: 0,
         username: "dsfsdfsdfsdf",
-        likes: 0,
-        dislikes: 0,
+        count_likes: 0,
+        count_dislikes: 0,
         watches: 100000
       },
       comments: []
     }
   },
   mounted() {
-    // TODO: getVideo
+    this.video = this.get_video({video_id: this.$route.params.video_id}).data
     // TODO: getComments
   },
   methods: {
+    ...mapActions([
+        'add_reaction', 'add_comment', 'get_comments', 'get_video'
+      ]),
     add_comment() {
       // TODO: addComment
     },

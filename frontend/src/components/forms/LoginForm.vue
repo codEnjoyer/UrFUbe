@@ -2,32 +2,41 @@
     <div>
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Вход</h2>
-      <input v-model="email" class="inp cent" type="email" placeholder="Почта">
-      <input v-model="password" class="inp cent" type="password" placeholder="Пароль">
+      <input v-model="obj.email" class="inp cent" type="email" placeholder="Почта">
+      <input v-model="obj.password" class="inp cent" type="password" placeholder="Пароль">
+      <span style="color: var(--color-waiting)">{{error}}</span>
       <button @click="login" class="btn cent btn__submit" type="submit">Войти</button>
       <button @click="$router.push('/')" class="btn cent btn__exit" type="reset">Отмена</button>
     </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
 
 export default {
   name: "LoginForm",
 
   methods: {
-    login() {
-      if (this.email && this.password) {
-        //TODO: login post
-        const form = new FormData();
-        form.set('email', this.email);
-        form.set('password', this.password);
+    ...mapActions([
+        'login'
+      ]),
+    async login() {
+      if (this.obj.email && this.obj.password) {
+        let json = JSON.stringify(this.obj);
+        await this.login(json)
+            .catch((er) => {
+              if (er.response && er.response.status === 400)
+                this.error = "Неверный логин или пароль"})
       }
     }
   },
   data() {
     return {
-      email: "",
-      password: ""
+      obj: {
+        email: "",
+        password: ""
+      },
+      error: ''
     }
   }
 

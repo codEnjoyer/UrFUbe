@@ -11,10 +11,11 @@ const app = createApp(App)
 axios.interceptors.response.use(undefined, function (error) {
   if (error) {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      store.dispatch('logout');
       return router.push('/auth')
+    } else if (error.response && error.response.status >= 500) {
+      return router.push('/error')
     }
   }
 });

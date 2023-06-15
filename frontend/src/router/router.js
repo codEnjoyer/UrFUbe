@@ -36,6 +36,10 @@ const routes = [
     {
         path: '/upload',
         component: UploadForm
+    },
+    {
+        path: '/error',
+        component: VideoGrid
     }
 ]
 

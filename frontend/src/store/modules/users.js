@@ -41,11 +41,12 @@ const actions = {
     return data;
   },
   async get_user({}, user_id) {
+    console.log(user_id)
     return await axios.get(`user/${user_id}`)
   },
   async logOut({commit}) {
     await axios.post('auth/logout');
-    commit('logout', null);
+    commit('logout');
   }
 };
 
@@ -53,7 +54,7 @@ const mutations = {
   set_auth(state, user) {
     state.user = user;
   },
-  logout(state){
+  logout({state}){
     state.user = null;
   },
 };

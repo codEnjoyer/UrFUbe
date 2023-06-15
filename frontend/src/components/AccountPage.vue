@@ -19,17 +19,20 @@ export default {
     return {
       user: {
         videos: Array,
-        username: ''
+        user: {
+          name: ''
+        }
       }
     }
   },
   async mounted() {
-    var id = this.$route.params.user_id;
-    if (id) {
+    let id = this.$route.params.user_id;
+    if (!!id) {
       this.user = await this.get_user(id);
     } else {
       this.user = await this.account_me();
     }
+    console.log(this.user)
   },
   methods: {
     ...mapActions([

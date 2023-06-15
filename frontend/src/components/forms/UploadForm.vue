@@ -46,7 +46,7 @@ export default {
         form.append('description', this.object.description)
         form.append('video_file', this.object.video_file)
         form.append('preview_file', this.object.preview_file)
-        this.upload()
+        this.upload(form)
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
