@@ -17,7 +17,6 @@ services:
   backend:
     container_name: fastapi_app
     restart: unless-stopped
-#    platform: linux/amd64
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -33,14 +32,6 @@ services:
 #      retries: 5
 #    depends_on:
 #      - db
-
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
-#      interval: 3s
-#      timeout: 10s
-#      retries: 5
-#    depends_on:
- #     - db
 
 
   db:
@@ -136,20 +127,6 @@ services:
   #        condition: service_healthy
   #      celery:
   #        condition: service_started
-#
-#  pgadmin:
-#    container_name: pgadmin
-#    image: dpage/pgadmin4
-#    env_file:
-#      - .env
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
-#      PGADMIN_DEFAULT_PASSWORD: root
-#    ports:
-#      - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
-#    depends_on:
-#      backend:
-#        condition: service_healthy
 
   pgadmin:
     container_name: pgadmin
