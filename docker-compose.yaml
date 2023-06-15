@@ -26,7 +26,6 @@ services:
     command: [ "sh", "/fastapi_app/backend/docker/app.sh" ]
     ports:
       - "${BACK_APP_PORT}:${BACK_APP_PORT}"
-<<<<<<< Updated upstream
 #    healthcheck:
 #      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
 #      interval: 3s
@@ -34,15 +33,15 @@ services:
 #      retries: 5
 #    depends_on:
 #      - db
-=======
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
-      interval: 3s
-      timeout: 10s
-      retries: 5
+
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:${BACK_APP_PORT}/health" ]
+#      interval: 3s
+#      timeout: 10s
+#      retries: 5
 #    depends_on:
  #     - db
->>>>>>> Stashed changes
+
 
   db:
     container_name: db_app
@@ -158,8 +157,8 @@ services:
     env_file:
       - .env
     environment:
-      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
-      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_DEFAULT_EMAIL: "${PG_ADMIN_EMAIL}"
+      PGADMIN_DEFAULT_PASSWORD: "${PG_ADMIN_PASS}"
     ports:
       - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
 #    depends_on:
