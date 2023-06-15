@@ -10,6 +10,7 @@ class VideoRead(BaseModel):
     username: str
     video_url: HttpUrl
     preview_url: HttpUrl
+    reaction_type_id: int
     count_reactions: int
     count_likes: int
     count_dislikes: int
