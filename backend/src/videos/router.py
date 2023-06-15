@@ -115,11 +115,27 @@ async def get_video_by_name(name: str, offset: int = 0, limit: int = 15,
 async def get_video(video_id: int,
                     async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     video = await get_video_with_id(async_session, video_id)
-    if current_user is not None:
-        stmt = update(Video).where(Video.id == video_id).values(count_views=video.count_views + 1)
-        await async_session.execute(stmt)
-        await async_session.commit()
+    if video is None:
+        raise HTTPException(status_code=404, detail="Video not found")
     return await get_video_info(video)
+
+
+@router.get('/auth/{video_id}')
+async def auth_get_video(video_id: int,
+                         user: User = Depends(current_user),
+                         async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
+    video = await get_video_with_id(async_session, video_id)
+    if video is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+    reaction = await async_session.scalar(
+        select(Reaction).where((Reaction.user_id == user.id) & (Reaction.video_id == video.id)))
+    reaction_type_id = -1
+    if reaction is not None:
+        reaction_type_id = reaction.reaction_type_id
+    stmt = update(Video).where(Video.id == video_id).values(count_views=video.count_views + 1)
+    await async_session.execute(stmt)
+    await async_session.commit()
+    return await get_video_info(video, reaction_type_id)
 
 
 @router.get('/{video_id}/comments')
@@ -242,7 +258,7 @@ async def get_videos_info(videos: List[Video]) -> List[VideoRead]:
     return videos_info
 
 
-async def get_video_info(video: Video) -> VideoRead:
+async def get_video_info(video: Video, reaction_type_id: int = -1) -> VideoRead:
     video_url = await get_presigned_url(video.video_url)
     preview_url = await get_presigned_url(video.preview_url)
     return VideoRead(video_id=video.id,
@@ -251,6 +267,7 @@ async def get_video_info(video: Video) -> VideoRead:
                      username=video.user.username,
                      video_url=video_url,
                      preview_url=preview_url,
+                     reaction_type_id=reaction_type_id,
                      count_reactions=video.count_reactions,
                      count_likes=video.count_likes,
                      count_dislikes=video.count_dislikes,
