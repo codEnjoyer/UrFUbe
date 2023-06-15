@@ -24,7 +24,11 @@ const actions = {
         })
   },
   async login({commit}, json) {
-    await axios.post('auth/login', json, {
+    let response_object = {
+      username: json.email,
+      password: json.password
+    }
+    await axios.post('auth/login', JSON.stringify(response_object), {
           headers: {
             'Content-Type': 'application/json'
           }

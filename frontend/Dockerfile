@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.18
+FROM node:lts-alpine3.18 as build-stage
 
 WORKDIR /fastapi_app/frontend
 
@@ -10,4 +10,12 @@ COPY package-lock.json .
 
 RUN npm install
 
-RUN npm run serve
+COPY . .
+
+#CMD ["npm", "run", "build"]
+RUN npm run build
+
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /fastapi_app/frontend/dist /usr/share/nginx/html
+EXPOSE 8000
+CMD ["nginx", "-g", "daemon off;"]
