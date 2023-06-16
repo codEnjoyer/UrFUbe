@@ -69,7 +69,7 @@ export default {
       this.$emit('theme')
     },
     async logout() {
-      await this.$store.actions.logOut();
+      await this.$store.dispatch('logOut')
     }
   }
 }

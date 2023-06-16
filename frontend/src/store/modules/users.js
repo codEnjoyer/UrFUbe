@@ -4,8 +4,6 @@ const state = {
     is_auth: false
 };
 
-
-
 const getters = {
     is_authorised: state => state.is_auth,
     local_storage_authed: () => localStorage.getItem("is_auth") === "true"
@@ -60,7 +58,7 @@ const actions = {
         console.log(form)
         return await axios.get(`user/${form.user_id}`, form)
     },
-    async logOut(commit) {
+    async logOut({ commit }) {
         await axios.post('auth/logout');
         commit('logout');
     }
