@@ -10,34 +10,30 @@ const getters = {
 };
 
 const actions = {
-  async registration({dispatch}, json) {
-    await axios.post('auth/register', json, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-      }).catch((error) => {
-          if (error.status === 400)
-            return 'Пароль должен быть более 8 символов'
-        }).then(async (r) => {
-          console.log(json);
-          await dispatch('login', json);
-        })
+  registration: async function ({dispatch}, json) {
+    return await axios.post('auth/register', json, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(async (r) => {
+      if (!!r && r.status === 200) {
+        let form = new FormData();
+        form.append('username', json.email)
+        form.append('password', json.password)
+        await dispatch('login', form);
+      }
+    })
   },
-  async login({commit}, json) {
-    let response_object = {
-      username: json.email,
-      password: json.password
-    }
-    await axios.post('auth/login', JSON.stringify(response_object), {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-      }).then((response) => {
-              commit('set_auth', response.data.user);
-            }
-        );
+  login: async function ({commit}, form) {
+    let r = await axios.post('auth/login', form, {
+    }).then((response) => {
+      if (!!response && response.status === 200)
+          commit('set_auth', response.data.user);
+        }
+    );
+    return r;
   },
-  async upload(form) {
+  upload: async function (form) {
     await axios.post(`video/upload`, form);
   },
   async account_me({state}) {
