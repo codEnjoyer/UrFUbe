@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Header @theme="change_theme" :is-authorised="true"/>
+  <Header @theme="change_theme"/>
   <router-view></router-view>
   </div>
 </template>

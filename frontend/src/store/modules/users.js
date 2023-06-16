@@ -17,21 +17,24 @@ const actions = {
         }
     },
     registration: async function ({dispatch}, json) {
-        return await axios.post('auth/register', json, {
+        let r = await axios.post('auth/register', json, {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(async (r) => {
-            if (!!r && r.status === 201) {
-              let obj = {
-                username: json.email,
-                password: json.password
-              }
-                await dispatch('login', obj);
-            }
         })
+        if (!!r && r.status === 201) {
+            let obj = {
+                username: JSON.parse(json).email,
+                password: JSON.parse(json).password
+            }
+            console.log(obj);
+            await dispatch('login', obj);
+        }
+        return r
+
     },
     login: async function ({commit}, obj) {
+        console.log(obj)
         let r = await axios.post('auth/login', obj, {
             headers: {
                 'access': 'application/json',
@@ -62,9 +65,11 @@ const actions = {
 const mutations = {
     set_auth(state) {
         state.is_auth = true;
+        localStorage.setItem('is_auth', 'true');
     },
     logout({state}) {
         state.is_auth = false;
+        localStorage.setItem('is_auth', 'false');
     },
 };
 
