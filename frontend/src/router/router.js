@@ -17,6 +17,10 @@ const routes = [
         component: AccountPage
     },
     {
+        path: '/account/me',
+        component: AccountPage
+    },
+    {
         path: '/video/:video_id',
         component: VideoPage
     },

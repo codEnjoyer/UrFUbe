@@ -1,12 +1,11 @@
 import axios from 'axios';
 
 const state = {
-    user: null
+    is_auth: false
 };
 
 const getters = {
-    is_authorised: state => !!state.user,
-    user: state => state.user,
+    is_authorised: state => state.is_auth
 };
 
 const actions = {
@@ -37,22 +36,17 @@ const actions = {
             headers: {
                 'access': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }})
-            .then((response) => {
-                  console.log(obj);
-                  console.log(response);
-                  if (!!response && response.status === 204) {
-                    commit('set_auth', response.data.user);
-                  }
-                  return response
-                }
-            );
+            }});
+        if (r && r.status === 204) {
+            commit('set_auth');
+        }
+        return r;
     },
     upload: async function (form) {
         await axios.post(`video/upload`, form);
     },
     async account_me({state}) {
-        let {data} = await axios.get(`user/${state.user.id}`);
+        let {data} = await axios.get(`user`);
         return data;
     },
     async get_user({}, form) {
@@ -66,11 +60,11 @@ const actions = {
 };
 
 const mutations = {
-    set_auth(state, user) {
-        state.user = user;
+    set_auth(state) {
+        state.is_auth = true;
     },
     logout({state}) {
-        state.user = null;
+        state.is_auth = false;
     },
 };
 

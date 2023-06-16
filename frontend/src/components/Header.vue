@@ -27,7 +27,7 @@
             </ul>
             <ul class="dropdown-menu" v-else>
               <li>
-                <router-link to="/account" class="dropdown-item btn">Аккаунт</router-link>
+                <router-link to="/account/me" class="dropdown-item btn">Аккаунт</router-link>
               </li>
               <li>
                 <button @click="logout" class="dropdown-item btn">Выйти</button>
