@@ -12,9 +12,9 @@ const getters = {
 const actions = {
   get_video: async function ({getters}, params) {
     if (!getters.is_authorised) {
-      return await axios.get(`video/${params.video_id}`, {headers: {"Access-Control-Allow-Origin": `*`}})
+      return await axios.get(`video/${params.video_id}`, {params: params})
     } else {
-      return await axios.get(`auth/video/${params.video_id}`, {headers: {"Access-Control-Allow-Origin": `*`}})
+      return await axios.get(`auth/video/${params.video_id}`, {params: params})
     }
   },
   registration: async function ({dispatch}, json) {

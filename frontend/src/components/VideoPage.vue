@@ -1,7 +1,7 @@
 <template>
   <div v-if="!is_load" class="container">
     <video controls controlsList="nodownload" autoplay="autoplay">
-      <source ref="videoPlayer" :src="video.video_url" type="video/*">
+      <source ref="videoPlayer" :src="video.video_url" >
     </video>
     <div class="video__text">
       <div>
@@ -73,8 +73,12 @@ export default {
   async mounted() {
     this.is_load = true
     let r = await this.get_video({video_id: this.$route.params.video_id})
-    if (r && r.status === 200) this.video = r.data
-    else this.$router.push('/error');
+    if (r && r.status === 200) {
+        this.video = r.data
+    }
+    else {
+        this.$router.push('/error');
+    }
 
     let r_com = await this.get_comments({video_id: this.$route.params.video_id})
     if (r_com && r_com.status === 200) this.comments = r.data
