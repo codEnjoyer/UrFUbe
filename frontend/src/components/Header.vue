@@ -5,7 +5,7 @@
         <router-link to="/" class="navbar-brand">UrFUbe</router-link>
         <div class="collapse navbar-collapse">
           <form class="d-flex search-input" role="search">
-            <input key="search_input" placeholder="Поиск" v-model="search_request" aria-label="Search">
+            <input key="search_input" placeholder="Поиск" v-model="search_request" @keyup.enter="search" aria-label="Search">
             <a class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
             </a>

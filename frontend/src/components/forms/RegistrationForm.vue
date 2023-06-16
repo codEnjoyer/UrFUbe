@@ -45,11 +45,11 @@ export default {
            let obj = JSON.stringify(this.object);
            this.is_load = true
            let re = await this.registration(obj);
-           if (re && re.status === 200) {
-             this.$router.push('/');
-           } else {
-             this.error = 'Повторите попытку'
-           }
+           this.$router.push('/');
+           // if (re && re.status === 200) {
+           // } else {
+           //   this.error = 'Повторите попытку'
+           // }
            this.is_load = false
          } else if (this.object.password !== this.pass_password) {
            this.error = 'Пароль не совпадает'
