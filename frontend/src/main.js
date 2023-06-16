@@ -1,6 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css"
-import { createApp } from 'vue'
-// import axios from 'axios';
+import {createApp} from 'vue'
 import App from './App'
 import router from '@/router/router.js'
 import store from '@/store'
@@ -24,6 +23,7 @@ axios.interceptors.response.use(undefined, function (error) {
 app
     .use(router)
     .use(store)
+    .use(require('vue-cookies'))
     .mount('#app')
 
 axios.defaults.withCredentials = true;

@@ -48,15 +48,16 @@ export default {
   data() {
     return {
       search_request: "",
-      main_theme: true,
-      is_authorised: false
+      main_theme: true
     }
   },
-  methods: {
+    // mounted() {
+    //   this.$store.commit("set_auth");
+    //   },
+    methods: {
     search() {
       if (this.search_request !== '') {
         this.$router.push('/search/' + this.search_request)
-        //TODO: search
         this.search_request = '';
       }
     },

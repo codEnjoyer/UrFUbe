@@ -299,7 +299,7 @@ async def upload_video_db(async_session: AsyncSession, user_id: int,
             name=name,
             description=description if description is not None else "",
             video_url=f"{user_id}/{name}/video.{video_ext}",
-            preview_url=f"{user_id}/{name}/preview.{preview_ext}" if is_have_preview else f"default_preview.jpeg",
+            preview_url=f"{user_id}/{name}/preview.{preview_ext}" if is_have_preview else "",
             user_id=user_id
         )
         async_session.add(video)

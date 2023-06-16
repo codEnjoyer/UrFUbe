@@ -3,7 +3,7 @@
     <video-promo
         v-for="video in videos"
         :video="video"
-        :key="video.id"
+        :key="video.video_id"
     />
   </div>
 </template>

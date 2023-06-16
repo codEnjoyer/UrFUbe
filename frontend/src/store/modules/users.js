@@ -4,6 +4,8 @@ const state = {
     is_auth: false
 };
 
+
+
 const getters = {
     is_authorised: state => state.is_auth
 };
@@ -34,12 +36,13 @@ const actions = {
 
     },
     login: async function ({commit}, obj) {
-        console.log(obj)
+
         let r = await axios.post('auth/login', obj, {
             headers: {
                 'access': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'
             }});
+        console.log(r)
         if (r && r.status === 204) {
             commit('set_auth');
         }
@@ -64,12 +67,12 @@ const actions = {
 
 const mutations = {
     set_auth(state) {
+        localStorage.setItem("is_auth", "true");
         state.is_auth = true;
-        localStorage.setItem('is_auth', 'true');
     },
-    logout({state}) {
+    logout(state) {
+        localStorage.setItem("is_auth", "false");
         state.is_auth = false;
-        localStorage.setItem('is_auth', 'false');
     },
 };
 

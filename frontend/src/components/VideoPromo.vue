@@ -1,7 +1,7 @@
 <template>
  <div  class="container__video">
    <div class="preview__wrap">
-     <router-link :to="'/video/' + video.user_id" style="text-decoration: none; color: inherit;">
+     <router-link :to="'/video/' + video.video_id" style="text-decoration: none; color: inherit;">
        <img :src="pre" class="preview">
        <a class="name">
          <p>{{video.name}}</p>
