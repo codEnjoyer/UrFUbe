@@ -9,7 +9,7 @@
       </div>
       <div class="row__dir">
         <router-link :to="'/account/' + video.user_id" class="username">{{video.username}}</router-link>
-        <div class="username" style="font-size: 16px">Просмотры: {{video.count_view}}</div>
+        <div class="username" style="font-size: 16px">Просмотры: {{video.count_views}}</div>
         <div v-if="$store.getters.is_authorised" class="reactions row__dir">
           <div class="column_dir">
             <button @click="add_like" class="btn likes">
@@ -61,7 +61,7 @@ export default {
         count_likes: 0,
         count_dislikes: 0,
         description: '',
-        count_view: 0,
+        count_views: 0,
         video_url: ''
       },
       comments: [],

@@ -23,6 +23,7 @@ const actions = {
         'Content-Type': 'application/json'
       }
     }).then(async (r) => {
+      console.log(json);
       if (!!r && r.status === 200) {
         let form = new FormData();
         form.append('username', json.email)
@@ -34,6 +35,7 @@ const actions = {
   login: async function ({commit}, form) {
     let r = await axios.post('auth/login', form, {
     }).then((response) => {
+      console.log(form);
       if (!!response && response.status === 200)
           commit('set_auth', response.data.user);
         }

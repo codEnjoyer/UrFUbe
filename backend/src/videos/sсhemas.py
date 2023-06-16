@@ -11,11 +11,12 @@ class VideoRead(BaseModel):
     count_reactions: int
     count_likes: int
     count_dislikes: int
-    watches: int
+    count_views: int
     video_url: HttpUrl
     preview_url: HttpUrl
     reaction_type_id: int
     username: str
+    user_id: int
 
 
 class CommentRead(BaseModel):

@@ -22,24 +22,24 @@ export default {
   },
   data() {
     return {
-      videos: Array
+      videos: []
     }
   },
   props: {
     video_arr: { type: Array }
   },
-  mounted() {
-    if (this.video_arr) {
+  async mounted() {
+    if (!this.$route.params.req) {
       this.videos = this.video_arr;
-    } else if (this.$route.params.req) {
-      let req = this.$route.params.req
-      console.log(req)
-      let r = this.search_video({ name: req })
-      if (r && r.status === 200) {
-        this.video_arr = r.data;
-      } else {
-      this.$router.push('/error')
-      }
+    } else {
+        let req = this.$route.params.req
+        console.log(req)
+        let r = await this.search_video({ name: req })
+        if (r && r.status === 200) {
+          this.videos= r.data;
+        } else {
+          this.$router.push('/error')
+        }
     }
   }, methods: {
     ...mapActions([

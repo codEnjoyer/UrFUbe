@@ -12,10 +12,10 @@ RUN npm install
 
 COPY . .
 
-#CMD ["npm", "run", "build"]
-RUN npm run build
-
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /fastapi_app/frontend/dist /usr/share/nginx/html
-EXPOSE 8000
-CMD ["nginx", "-g", "daemon off;"]
+#RUN npm run serve
+CMD ["npm", "run", "serve"]
+#
+#FROM nginx:stable-alpine as production-stage
+#COPY --from=build-stage /fastapi_app/frontend/dist /usr/share/nginx/html
+#EXPOSE 8000
+#CMD ["nginx", "-g", "daemon off;"]
