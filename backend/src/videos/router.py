@@ -287,7 +287,8 @@ def get_comment_info(comment: Comment) -> CommentRead:
     return CommentRead(user_id=comment.user_id,
                        video_id=comment.video_id,
                        text=comment.text,
-                       create_at=comment.create_at)
+                       create_at=comment.create_at,
+                       username=comment.user.username)
 
 
 async def upload_video_db(async_session: AsyncSession, user_id: int,

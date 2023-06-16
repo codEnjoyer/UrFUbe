@@ -22,6 +22,7 @@ class VideoRead(BaseModel):
 class CommentRead(BaseModel):
     video_id: int
     user_id: int
+    username: str
     create_at: datetime
     text: str
 

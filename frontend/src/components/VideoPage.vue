@@ -29,6 +29,7 @@
         <p class="descr"> Описание: {{ video.description }}</p>
       </div>
       <div class="comments_container">
+          <h3>Комментарии</h3>
         <div v-if="$store.getters.is_authorised" class="comment_form">
           <textarea v-model="text_comment" class="inp" type="text" placeholder="Комментарий" />
           <div class="btn sub" @click="add_comment">
@@ -37,9 +38,12 @@
         </div>
         <div class="comment_cont" v-for="com in comments">
           <hr>
-          <!--router-link :to="'/user/' + com.user_id" /-->
-          <div class="username">{{com.username}}</div>
-          <p>{{com.text}}</p>
+          <router-link :to="'/account/' + com.user_id" class="username">
+              {{com.username}}
+          </router-link>
+          <p>
+              {{com.text}}
+          </p>
         </div>
       </div>
     </div>

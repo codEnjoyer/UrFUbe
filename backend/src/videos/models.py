@@ -58,7 +58,7 @@ class Comment(Base):
     text = Column(String(length=150), nullable=False)
     create_at = Column(TIMESTAMP, default=datetime.utcnow)
 
-    user = relationship("User", back_populates="comment")
+    user = relationship("User", back_populates="comment", lazy="subquery")
     video = relationship("Video", back_populates="comment")
 
 
