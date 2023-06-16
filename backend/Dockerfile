@@ -1,4 +1,4 @@
-FROM amd64/python:3.11.4-slim-bullseye
+FROM python:3.11.4-slim-bullseye
 
 WORKDIR /fastapi_app/backend
 

@@ -7,7 +7,8 @@ const state = {
 
 
 const getters = {
-    is_authorised: state => state.is_auth
+    is_authorised: state => state.is_auth,
+    local_storage_authed: () => localStorage.getItem("is_auth") === "true"
 };
 
 const actions = {
@@ -15,7 +16,7 @@ const actions = {
         if (!getters.is_authorised) {
             return await axios.get(`video/${params.video_id}`, {params: params})
         } else {
-            return await axios.get(`auth/video/${params.video_id}`, {params: params})
+            return await axios.get(`video/auth/${params.video_id}`, {params: params})
         }
     },
     registration: async function ({dispatch}, json) {
@@ -59,7 +60,7 @@ const actions = {
         console.log(form)
         return await axios.get(`user/${form.user_id}`, form)
     },
-    async logOut({commit}) {
+    async logOut(commit) {
         await axios.post('auth/logout');
         commit('logout');
     }

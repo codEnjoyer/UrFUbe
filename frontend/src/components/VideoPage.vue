@@ -32,7 +32,7 @@
           <h3>Комментарии</h3>
         <div v-if="$store.getters.is_authorised" class="comment_form">
           <textarea v-model="text_comment" class="inp" type="text" placeholder="Комментарий" />
-          <div class="btn sub" @click="add_comment">
+          <div class="btn sub" @click="post_comment">
             <img class="icon-light" src="../assets/back.png" style="width: 32px">
           </div>
         </div>
@@ -71,7 +71,7 @@ export default {
       comments: [],
       is_load: false,
       text_comment: '',
-      reaction: 0
+      reaction: -1
     }
   },
   async mounted() {
@@ -93,31 +93,45 @@ export default {
     ...mapActions([
         'add_reaction', 'add_comment', 'get_comments', 'get_video'
       ]),
-    async add_comment() {
-      await this.add_comment({ video_id: this.video.video_id, text: this.text_comment })
-      this.comments.add({ video_id: this.video.video_id, text: this.text_comment })
+    async post_comment() {
+        if (this.text_comment !== "") {
+            await this.add_comment(
+                {
+                    video_id: this.video.video_id,
+                    text: this.text_comment
+                })
+            this.comments.push({video_id: this.video.video_id, text: this.text_comment})
+            this.text_comment = "";
+        }
     },
     async add_like() {
-      await this.add_reaction({ video_id: this.video.video_id, reaction_type: 1 })
-      if (this.reaction !== 0 && this.reaction === 2) {
-        this.video.count_dislikes -= 1
-        this.video.count_likes += 1
-      }
-      this.reaction = 1
+        await this.add_reaction(
+            {
+                video_id: this.video.video_id,
+                reaction_type: 0
+            })
+        if (this.reaction !== -1 && this.reaction === 1) {
+            this.video.count_dislikes -= 1
+            this.video.count_likes += 1
+        }
+        this.reaction = 0
     },
-    async add_dislike() {
-      await this.add_reaction({ video_id: this.video.video_id, reaction_type: 2 })
-      if (this.reaction !== 0 && this.reaction === 1) {
-        this.video.count_likes -= 1
-        this.video.count_dislikes += 1
-      }
-      this.reaction = 2
+      async add_dislike() {
+          await this.add_reaction({video_id: this.video.video_id, reaction_type: 1})
+          if (this.reaction !== -1 && this.reaction === 0) {
+              this.video.count_likes -= 1
+              this.video.count_dislikes += 1
+          }
+          this.reaction = 1
     }
   }
 }
 </script>
 
 <style scoped>
+img {
+   filter: var(--invert-light)
+}
 video {
   max-width: 800px;
   height: 450px;

@@ -4,8 +4,8 @@
       <div class="container-fluid">
         <router-link to="/" class="navbar-brand">UrFUbe</router-link>
         <div class="collapse navbar-collapse">
-          <form class="d-flex search-input" role="search">
-            <input key="search_input" placeholder="Поиск" v-model="search_request" @submit="search" aria-label="Search">
+          <form class="d-flex search-input" role="search" @submit="search">
+            <input key="search_input" placeholder="Поиск" v-model="search_request" aria-label="Search">
             <a class="btn" @click="search">
               <img class="icon-light" src="../assets/header/loupe.png">
             </a>
@@ -51,9 +51,13 @@ export default {
       main_theme: true
     }
   },
-    // mounted() {
-    //   this.$store.commit("set_auth");
-    //   },
+    mounted() {
+        if (this.$store.getters.local_storage_authed) {
+            this.$store.commit("set_auth")
+        } else {
+            this.$store.commit("logout")
+        }
+      },
     methods: {
     search() {
       if (this.search_request !== '') {

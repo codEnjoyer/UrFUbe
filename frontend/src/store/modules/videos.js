@@ -19,10 +19,10 @@ const actions = {
     await axios.post(`video/upload`, form, {headers: {'Content-Type': 'multipart/form-data', 'accept': 'application/json'}});
   },
   add_comment: async function ({}, params) {
-    await axios.post(`video/${params.video_id}/comment`, { params: params })
+    await axios.post(`video/${params.video_id}/comment`, params, {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'accept': 'application/json'}})
   },
   add_reaction: async function ({}, params) {
-    await axios.post(`video/${params.video_id}/comment`, { params: params })
+    await axios.post(`video/${params.video_id}/reaction`, params, {headers: {'Content-Type': 'application/x-www-form-urlencoded', 'accept': 'application/json'}})
   },
 };
 const state = {}
