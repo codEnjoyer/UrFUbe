@@ -25,15 +25,19 @@ export default {
     async auth() {
       if (!this.is_load)
         if (this.obj.username && this.obj.password) {
-          let form = new FormData();
-          form.append('username', this.username)
-          form.append('password', this.password)
           this.is_load = true;
-          let r = await this.login(form)
+          let r = await this.login({
+              grant_type: '',
+              username: this.obj.username,
+              password: this.obj.password,
+              scope: '',
+              client_id: '',
+              client_secret: ''
+          })
           this.is_load = false;
           if (r && r.status === 400)
-                  this.error = "Неверный логин или пароль"
-          else if (r && r.status === 200) {
+              this.error = "Неверный логин или пароль"
+          else if (r && r.status  === 204) {
              this.$router.push('/');
            } else {
              this.error = 'Повторите попытку'

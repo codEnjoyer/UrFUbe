@@ -3,7 +3,7 @@
     <h1>Загрузка видео</h1>
     <div class="input-file-row input-file">
       <div class="file__container">
-        <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mvk">
+        <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
         <span>{{object.video_file.name}}</span>
       </div>
       <div class="file__container pre">
