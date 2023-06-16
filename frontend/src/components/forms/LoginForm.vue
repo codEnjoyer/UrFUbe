@@ -2,11 +2,13 @@
     <div>
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Вход</h2>
-      <input v-model="obj.email" class="inp cent" type="email" placeholder="Почта">
+      <span v-if="is_load" style="width: 400px"><p>Загрузка</p></span>
+      <input v-model="obj.username" class="inp cent" type="email" placeholder="Почта">
       <input v-model="obj.password" class="inp cent" type="password" placeholder="Пароль">
       <span style="color: var(--color-waiting)">{{error}}</span>
-      <button @click="login" class="btn cent btn__submit" type="submit">Войти</button>
+      <button @click="auth" class="btn cent btn__submit" type="submit">Войти</button>
       <button @click="$router.push('/')" class="btn cent btn__exit" type="reset">Отмена</button>
+      <p>Нет аккаунта? <router-link to="/register">Регистрация</router-link></p>
     </div>
 </template>
 
@@ -20,23 +22,35 @@ export default {
     ...mapActions([
         'login'
       ]),
-    async login() {
-      if (this.obj.email && this.obj.password) {
-        let json = JSON.stringify(this.obj);
-        await this.login(json)
-            .catch((er) => {
-              if (er.response && er.response.status === 400)
-                this.error = "Неверный логин или пароль"})
-      }
+    async auth() {
+      if (!this.is_load)
+        if (this.obj.username && this.obj.password) {
+          let form = new FormData();
+          form.append('username', this.username)
+          form.append('password', this.password)
+          this.is_load = true;
+          let r = await this.login(form)
+          this.is_load = false;
+          if (r && r.status === 400)
+                  this.error = "Неверный логин или пароль"
+          else if (r && r.status === 200) {
+             this.$router.push('/');
+           } else {
+             this.error = 'Повторите попытку'
+           }
+        } else {
+          this.error = 'Заполните все поля'
+        }
     }
   },
   data() {
     return {
       obj: {
-        email: "",
+        username: "",
         password: ""
       },
-      error: ''
+      error: '',
+      is_load: ''
     }
   }
 

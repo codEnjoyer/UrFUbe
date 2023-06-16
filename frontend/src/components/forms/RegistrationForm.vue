@@ -3,6 +3,7 @@
       <h1 class="cent">UrFUbe</h1>
       <h2 class="cent">Регистрация</h2>
         <div>
+          <span v-if="is_load" style="width: 400px"><p>Загрузка</p></span>
           <input v-model="object.username" class="inp cent" placeholder="Имя">
           <input v-model="object.email" class="inp cent" type="email" placeholder="Почта">
           <input v-model="object.password" class="inp cent" type="password" placeholder="Пароль">
@@ -11,6 +12,7 @@
           <button class="btn cent btn__submit" @click="register">Зарегистрироваться</button>
         </div>
       <button @click="$router.push('/')" class="btn cent btn__exit">Отмена</button>
+      <p>Есть аккаунт? <router-link to="/auth">Вход</router-link></p>
     </div>
 </template>
 
@@ -28,24 +30,35 @@ export default {
       },
       error: '',
       pass_password:  '',
+      is_load: false
     }
   },
   methods: {
      ...mapActions([
         'registration'
       ]),
-    register() {
-      if (this.object.email && this.object.password && this.object.username && this.object.password === this.pass_password) {
-        let obj = JSON.stringify(this.object);
-        this.registration(obj);
-      } else if (this.object.password !== this.pass_password) {
-        this.error = 'Пароль не совпадает'
-      } else {
-        this.error = 'Пожалуйста, заполните все поля'
-      }
+    async register() {
+       if (!this.is_load) {
+         if(this.object.password.length < 8) {
+           this.error = "Пароль должен содержать более 8 символов"
+         } else if (this.object.email && this.object.password && this.object.username && this.object.password === this.pass_password) {
+           let obj = JSON.stringify(this.object);
+           this.is_load = true
+           let re = await this.registration(obj);
+           if (re && re.status === 200) {
+             this.$router.push('/');
+           } else {
+             this.error = 'Повторите попытку'
+           }
+           this.is_load = false
+         } else if (this.object.password !== this.pass_password) {
+           this.error = 'Пароль не совпадает'
+         } else {
+           this.error = 'Пожалуйста, заполните все поля'
+         }
+       }
     }
-  },
-
+  }
 }
 </script>
 

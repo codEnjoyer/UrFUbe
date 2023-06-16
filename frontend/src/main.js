@@ -15,6 +15,10 @@ axios.interceptors.response.use(undefined, function (error) {
       originalRequest._retry = true;
       return router.push('/auth')
     } else if (error.response && error.response.status >= 500) {
+      store.dispatch('logOut');
+      return router.push('/auth')
+    } else if ((error.response && error.response.status > 499) || error.response === null) {
+      originalRequest._retry = true;
       return router.push('/error')
     }
   }
@@ -27,6 +31,6 @@ app
 
 axios.defaults.withCredentials = true;
 //axios.defaults.baseURL = 'http://localhost:${BACK_PORT}/';
-axios.defaults.baseURL = 'http://localhost:8000/';
+axios.defaults.baseURL = 'http://localhost:5000/';
 
 import "bootstrap/dist/js/bootstrap.js"
