@@ -10,6 +10,7 @@
 
 <script>
 import VideoPromo from "@/components/VideoPromo.vue";
+import {mapActions} from "vuex";
 
 export default {
   name: "VideoGrid",
@@ -21,8 +22,19 @@ export default {
       videos: Array
     }
   },
-  mounted() {
-    //TODO: get videos
+  methods: {
+    ...mapActions([
+        'get_homepage'
+      ])
+  },
+  async mounted() {
+    let r = await this.get_homepage()
+    if (r && r.status === 200) {
+      this.videos = r.data
+    }
+    else {
+      this.$router.push('/error')
+    }
   }
 }
 </script>

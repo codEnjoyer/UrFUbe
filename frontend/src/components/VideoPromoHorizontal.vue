@@ -1,10 +1,10 @@
 <template>
   <div class="video__promo">
-    <router-link :to="'/video/' + video.user_id" class="preview">
+    <router-link :to="'/video/' + video.video_id" class="preview">
       <img :src="pre" >
     </router-link>
     <div class="video__text">
-      <router-link :to="'/video/' + video.user_id" style="text-decoration: none; color: inherit;">
+      <router-link :to="'/video/' + video.video_id" style="text-decoration: none; color: inherit;">
         <a class="name">
           <p>{{video.name}}</p>
         </a>
@@ -12,7 +12,7 @@
        <router-link :to="'/account/' + video.user_id" class="username">
          <p> Автор: {{video.username}} </p>
        </router-link>
-     <p class="username">Просмотры: {{video.watches}}</p>
+     <p class="username">Просмотры: {{video.count_view}}</p>
     </div>
   </div>
 </template>
@@ -21,11 +21,7 @@
 export default {
   name: "VideoPromoHorizontal",
   props: {
-    video: { type: Object, default: {
-        user_id: 0,
-        watches: 0,
-        name: ""
-      } }
+    video: { type: Object, required: true }
   },
   data() {
     return {
@@ -33,8 +29,8 @@ export default {
     }
   },
   mounted() {
-    if (this.video.preview) {
-      this.pre = this.video.preview;
+    if (this.video.preview_url) {
+      this.pre = this.video.preview_url;
     }
   }
 }

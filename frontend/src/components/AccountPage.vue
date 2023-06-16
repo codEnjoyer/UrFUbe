@@ -1,34 +1,44 @@
 <template>
   <div class="list">
     <div class="label_cont">
-      <h1>{{user.name}}</h1>
+      <span v-if="is_load" style="width: 400px"><p>Загрузка</p></span>
+      <h1>{{datas.user.username}}</h1>
     </div>
-    <video-list :video_arr="user.videos" />
+    <video-list :video_arr="datas.videos" />
   </div>
 </template>
 
 <script>
 import VideoList from "@/components/VideoList.vue";
 import {mapActions} from "vuex";
-import users from "@/store/modules/users";
 
 export default {
   name: "AccountPage",
   components: {VideoList},
   data() {
     return {
-      user: {
+      datas: {
         videos: Array,
         user: {
           name: ''
         }
-      }
+      },
+      is_load: false
     }
   },
   async mounted() {
     let id = this.$route.params.user_id;
     if (!!id) {
-      this.user = await this.get_user(id);
+      let f = { user_id: id}
+      this.is_load = true;
+      let r = await this.get_user({ user_id: id });
+      if (r && r.status === 200) {
+        this.datas.user = r.data.user
+        this.datas.videos = r.data.videos
+      } else {
+        this.$router.push('/error')
+      }
+      this.is_load = false;
     } else {
       this.user = await this.account_me();
     }

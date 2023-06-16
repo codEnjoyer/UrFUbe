@@ -1,35 +1,32 @@
 import axios from 'axios';
-import header from "@/components/Header.vue";
 
 const actions = {
-  async get_video({}, video_id) {
-    let {data} = await axios.get(`video/${video_id.video_id}`, { headers: { "Access-Control-Allow-Origin": `*`}})
-
-    return data;
+  async search_video({}, req) {
+    console.log(req)
+    return await axios.get(`video/search`, {params: req})
   },
-  async search_video(req) {
-    let videos = await axios.get(`video/search`, req)
-    return videos;
+  get_comments: async function ({}, params) {
+    return await axios.get(`video/${params.video_id}/comments`)
   },
-  async get_comments(id) {
-    let comments = await axios.get(`video/${id}/comments`)
-    return comments
+  get_homepage: async function () {
+    return await axios.get('/');
   },
-  async get_homepage() {
-    let videos = await axios.get('/');
-    return videos;
-  },
-  async upload(form) {
+  upload: async function (form) {
     await axios.post(`video/upload`, form);
   },
-  async add_comment(video_id, text) {
-    await axios.post(`video/${video_id}/comment`, { video_id: video_id, text: text })
+  add_comment: async function ({}, params) {
+    await axios.post(`video/${params.video_id}/comment`, { params: params })
   },
-  async add_reaction(video_id, reaction_type) {
-    await axios.post(`video/${video_id}/comment`, { video_id: video_id, reaction_type: reaction_type })
+  add_reaction: async function ({}, params) {
+    await axios.post(`video/${params.video_id}/comment`, { params: params })
   }
 };
-
+const state = {}
+const getters = {}
+const mutations ={}
 export default {
+  state,
+  getters,
   actions,
+  mutations
 };

@@ -10,6 +10,13 @@ const getters = {
 };
 
 const actions = {
+  get_video: async function ({getters}, params) {
+    if (!getters.is_authorised) {
+      return await axios.get(`video/${params.video_id}`, {headers: {"Access-Control-Allow-Origin": `*`}})
+    } else {
+      return await axios.get(`auth/video/${params.video_id}`, {headers: {"Access-Control-Allow-Origin": `*`}})
+    }
+  },
   registration: async function ({dispatch}, json) {
     return await axios.post('auth/register', json, {
       headers: {
@@ -40,9 +47,9 @@ const actions = {
     let {data} = await axios.get(`user/${state.user.id}`);
     return data;
   },
-  async get_user({}, user_id) {
-    console.log(user_id)
-    return await axios.get(`user/${user_id}`)
+  async get_user({}, form) {
+    console.log(form)
+    return await axios.get(`user/${form.user_id}`, form)
   },
   async logOut({commit}) {
     await axios.post('auth/logout');

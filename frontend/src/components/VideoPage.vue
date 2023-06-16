@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div v-if="!is_load" class="container">
     <video controls controlsList="nodownload" autoplay="autoplay">
-      <source ref="videoPlayer" src="" type="video/*">
+      <source ref="videoPlayer" :src="video.video_url" type="video/*">
     </video>
     <div class="video__text">
       <div>
@@ -9,7 +9,7 @@
       </div>
       <div class="row__dir">
         <router-link :to="'/account/' + video.user_id" class="username">{{video.username}}</router-link>
-        <div class="username" style="font-size: 16px">Просмотры: {{video.watches}}</div>
+        <div class="username" style="font-size: 16px">Просмотры: {{video.count_view}}</div>
         <div v-if="$store.getters.is_authorised" class="reactions row__dir">
           <div class="column_dir">
             <button @click="add_like" class="btn likes">
@@ -30,7 +30,7 @@
       </div>
       <div class="comments_container">
         <div v-if="$store.getters.is_authorised" class="comment_form">
-          <textarea class="inp" type="text" placeholder="Комментарий" />
+          <textarea v-model="text_comment" class="inp" type="text" placeholder="Комментарий" />
           <div class="btn sub" @click="add_comment">
             <img class="icon-light" src="../assets/back.png" style="width: 32px">
           </div>
@@ -56,30 +56,53 @@ export default {
     return {
       video: {
         id: 0,
-        username: "dsfsdfsdfsdf",
+        name: '',
+        username: '',
         count_likes: 0,
         count_dislikes: 0,
-        watches: 100000
+        description: '',
+        count_view: 0,
+        video_url: ''
       },
-      comments: []
+      comments: [],
+      is_load: false,
+      text_comment: '',
+      reaction: 0
     }
   },
-  mounted() {
-    this.video = this.get_video({video_id: this.$route.params.video_id}).data
-    // TODO: getComments
+  async mounted() {
+    this.is_load = true
+    let r = await this.get_video({video_id: this.$route.params.video_id})
+    if (r && r.status === 200) this.video = r.data
+    else this.$router.push('/error');
+
+    let r_com = await this.get_comments({video_id: this.$route.params.video_id})
+    if (r_com && r_com.status === 200) this.comments = r.data
+    this.is_load = false
   },
   methods: {
     ...mapActions([
         'add_reaction', 'add_comment', 'get_comments', 'get_video'
       ]),
-    add_comment() {
-      // TODO: addComment
+    async add_comment() {
+      await this.add_comment({ video_id: this.video.video_id, text: this.text_comment })
+      this.comments.add({ video_id: this.video.video_id, text: this.text_comment })
     },
-    add_like() {
-      // TODO: addlike
+    async add_like() {
+      await this.add_reaction({ video_id: this.video.video_id, reaction_type: 1 })
+      if (this.reaction !== 0 && this.reaction === 2) {
+        this.video.count_dislikes -= 1
+        this.video.count_likes += 1
+      }
+      this.reaction = 1
     },
-    add_dislike() {
-      // TODO: addDislike
+    async add_dislike() {
+      await this.add_reaction({ video_id: this.video.video_id, reaction_type: 2 })
+      if (this.reaction !== 0 && this.reaction === 1) {
+        this.video.count_likes -= 1
+        this.video.count_dislikes += 1
+      }
+      this.reaction = 2
     }
   }
 }

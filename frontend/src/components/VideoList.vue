@@ -5,7 +5,7 @@
       <video-promo-horizontal
           v-for="video in videos"
           :video="video"
-          :key="video.id"
+          :key="video.video_id"
       />
     </div>
   </div>
@@ -13,6 +13,7 @@
 
 <script>
 import VideoPromoHorizontal from "@/components/VideoPromoHorizontal.vue";
+import {mapActions} from "vuex";
 
 export default {
   name: "VideoList",
@@ -25,16 +26,26 @@ export default {
     }
   },
   props: {
-    video_arr: { type: Array, default: [] }
+    video_arr: { type: Array }
   },
   mounted() {
     if (this.video_arr) {
       this.videos = this.video_arr;
-    } else {
-      //TODO: get search
+    } else if (this.$route.params.req) {
+      let req = this.$route.params.req
+      console.log(req)
+      let r = this.search_video({ name: req })
+      if (r && r.status === 200) {
+        this.video_arr = r.data;
+      } else {
+      this.$router.push('/error')
+      }
     }
+  }, methods: {
+    ...mapActions([
+        'search_video'
+      ]),
   }
-
 }
 </script>
 

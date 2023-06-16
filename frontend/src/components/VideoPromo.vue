@@ -10,7 +10,7 @@
      <router-link :to="'/account/' + video.user_id" class="username">
        <p> Автор: {{video.username}} </p>
      </router-link>
-     <p class="username">Просмотры: {{video.watches}}</p>
+     <p class="username">Просмотры: {{video.count_view}}</p>
    </div>
  </div>
 </template>
