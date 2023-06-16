@@ -245,7 +245,7 @@ def get_sort_parameter(sort_parameter: VideoSortType):
     elif sort_parameter == VideoSortType.count_dislikes:
         return Video.count_dislikes
     elif sort_parameter == VideoSortType.count_views:
-        return Video.count_views
+        return Video.watches
     elif sort_parameter == VideoSortType.upload_at:
         return Video.uploaded_at
 
@@ -268,6 +268,7 @@ async def get_video_info(video: Video, reaction_type_id: int = -1) -> VideoRead:
                      video_url=video_url,
                      preview_url=preview_url,
                      reaction_type_id=reaction_type_id,
+                     watches=video.count_views,
                      count_reactions=video.count_reactions,
                      count_likes=video.count_likes,
                      count_dislikes=video.count_dislikes,

@@ -7,14 +7,15 @@ class VideoRead(BaseModel):
     video_id: int
     name: str
     description: str
-    username: str
-    video_url: HttpUrl
-    preview_url: HttpUrl
-    reaction_type_id: int
+    upload_at: datetime
     count_reactions: int
     count_likes: int
     count_dislikes: int
-    upload_at: datetime
+    watches: int
+    video_url: HttpUrl
+    preview_url: HttpUrl
+    reaction_type_id: int
+    username: str
 
 
 class CommentRead(BaseModel):
