@@ -30,7 +30,10 @@ export default {
   },
   async mounted() {
     if (!this.$route.params.req) {
-      this.videos = this.video_arr;
+      let r = await this.get_videos( { user_id: Number(this.$route.params.user_id) })
+      if (r && r.status === 200) {
+        this.videos = r.data;
+      }
     } else {
         let req = this.$route.params.req
         console.log(req)
@@ -43,7 +46,8 @@ export default {
     }
   }, methods: {
     ...mapActions([
-        'search_video'
+        'search_video',
+        'get_videos'
       ]),
   }
 }
