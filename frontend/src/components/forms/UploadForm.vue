@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       object: {
-        preview_file: Image,
+        preview_file: File,
         video_file: File,
         name: '',
         description: '',
@@ -44,14 +44,18 @@ export default {
 
       if (this.object.video_file && this.object.name) {
           let form = new FormData();
-          form.append('name', this.object.name);
-          form.append('description', this.object.description);
           form.append('video_file', this.object.video_file);
           form.append('preview_file', this.object.preview_file);
-          form.forEach(el => console.log(el));
-
-
-        await this.upload(form);
+          let response = await this.upload({
+              form: form,
+              query: {
+                      name: this.object.name,
+                      description: this.object.description
+              }
+          });
+          if (response && response.status === 200){
+              this.$router.push("/")
+          }
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
