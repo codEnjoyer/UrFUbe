@@ -64,7 +64,7 @@ const actions = {
     },
     async get_user({}, form) {
         console.log(form)
-        return await axios.get(`user/${form.user_id}`, form)
+        return await axios.get(`user/${form.user_id}}`, form)
     },
     async logOut({ commit }) {
         await axios.post('auth/logout');

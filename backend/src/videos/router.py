@@ -81,7 +81,8 @@ async def post_reaction(video_id: int, reaction_type: ReactionType,
         async_session.add(reaction)
     stmt = update(Video).where(Video.id == video.id).values(count_reactions=video.count_reactions,
                                                             count_likes=video.count_likes,
-                                                            count_dislikes=video.count_dislikes)
+                                                            count_dislikes=video.count_dislikes,
+                                                            )
     await async_session.execute(stmt)
     await async_session.commit()
     return ReactionRead(user_id=user.id, video_id=video_id, reaction_type=int(reaction_type))
@@ -114,9 +115,14 @@ async def get_video_by_name(name: str, offset: int = 0, limit: int = 15,
 async def get_video(video_id: int,
                     async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     video = await get_video_with_id(async_session, video_id)
+    reaction = await async_session.scalar(
+        select(Reaction).where((Reaction.user_id == video.user_id) & (Reaction.video_id == video.id)))
+    reaction_type_id = -1
+    if reaction is not None:
+        reaction_type_id = reaction.reaction_type_id
     if video is None:
         raise HTTPException(status_code=404, detail="Video not found")
-    return await get_video_info(video)
+    return await get_video_info(video, reaction_type_id)
 
 
 @router.get('/auth/{video_id}')
