@@ -8,12 +8,12 @@ from auth.models import User
 router = APIRouter(tags=["Utils"])
 
 
-@router.get("/protected-route")
+@router.get("/protected")
 def protected_route(user: Annotated[User, Depends(current_user)]):
     return f"Hello, {user.username}, your id in database: {user.id}"
 
 
-@router.get("/unprotected-route")
+@router.get("/unprotected")
 def unprotected_route():
     return f"Hello, anonymous!"
 

@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
 export default {
   name: "Header",
   data() {
@@ -51,14 +52,13 @@ export default {
       main_theme: true
     }
   },
-    mounted() {
-        if (this.$store.getters.local_storage_authed) {
-            this.$store.commit("set_auth")
-        } else {
-            this.$store.commit("logout")
-        }
+    async mounted() {
+        await this.check_authorise()
       },
     methods: {
+      ...mapActions([
+        'check_authorise'
+      ]),
     search() {
       if (this.search_request !== '') {
         this.$router.push('/search/' + this.search_request)

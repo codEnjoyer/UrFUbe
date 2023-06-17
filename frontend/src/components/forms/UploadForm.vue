@@ -42,17 +42,15 @@ export default {
   methods: {
     async upload_video() {
       if (this.object.video_file && this.object.name) {
-        //let form = new FormData();
-        // form.append('name', this.object.name)
-        // form.append('description', this.object.description)
-        // form.append('video_file', byteArray)
-        // form.append('preview_file', byteArray_1)
+        let form = new FormData();
+        form.append('video_file', this.object.video_file)
+        form.append('preview_file', this.object.preview_file)
         let obj = JSON.stringify({
           name: this.object.name,
           description: this.object.description
         })
         console.log(obj)
-        const responce = await axios.post("video/upload", obj, this.object.video_file, this.object.preview_file, {
+        const responce = await axios.post("video/upload", {params: obj}, form, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }

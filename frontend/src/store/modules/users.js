@@ -5,8 +5,7 @@ const state = {
 };
 
 const getters = {
-    is_authorised: state => state.is_auth,
-    local_storage_authed: () => localStorage.getItem("is_auth") === "true"
+    is_authorised: state => state.is_auth
 };
 
 const actions = {
@@ -15,6 +14,18 @@ const actions = {
             return await axios.get(`video/${params.video_id}`, {params: params})
         } else {
             return await axios.get(`video/auth/${params.video_id}`, {params: params})
+        }
+    },
+    check_authorise: async function({ commit }){
+        console.log("check_authorize")
+        let r = await axios.get("protected")
+        console.log(r)
+        if (!!r && r.status === 200){
+            console.log("set_auth")
+            commit('set_auth')
+        } else {
+            console.log("logout")
+            commit('logout')
         }
     },
     registration: async function ({dispatch}, json) {
@@ -63,11 +74,9 @@ const actions = {
 
 const mutations = {
     set_auth(state) {
-        localStorage.setItem("is_auth", "true");
         state.is_auth = true;
     },
     logout(state) {
-        localStorage.setItem("is_auth", "false");
         state.is_auth = false;
     },
 };

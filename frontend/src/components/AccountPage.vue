@@ -27,8 +27,7 @@ export default {
     }
   },
   async mounted() {
-    let id = this.$route.params.user_id;
-    if (!!id) {
+    if (this.$route.path !== 'account/me') {
       let f = { user_id: id}
       this.is_load = true;
       let r = await this.get_user({ user_id: id });
