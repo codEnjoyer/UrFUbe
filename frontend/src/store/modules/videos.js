@@ -15,7 +15,8 @@ const actions = {
   get_videos: async function ({}, params) {
     return await axios.get(`video/user/${params.user_id}`, { params: params })
   },
-  upload: async function (form) {
+  upload: async function ({}, form) {
+    console.log(form)
     await axios.post(`video/upload`, form, {headers: {'Content-Type': 'multipart/form-data', 'accept': 'application/json'}});
   },
   add_comment: async function ({}, params) {

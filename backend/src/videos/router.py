@@ -1,14 +1,15 @@
 import logging
-from typing import List
+from typing import List, Annotated
 import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import func
+from io import BytesIO
 
-from config import BUCKET_NAME, ALLOWED_FILE_EXTENSIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from config import BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from database import get_async_session
 from auth.models import User
 from videos.models import Video, Reaction, ReactionType, Comment, VideoSortType
@@ -46,24 +47,22 @@ async def get_presigned_url(file_name: str):
 
 
 @router.post("/upload")
-async def upload(name: str, description: str = None,
-                 video_file: UploadFile = File(),
-                 preview_file: UploadFile | None = None,
+async def upload(name: str, 
+                 video_file: Annotated[bytes, File()],
+                 description: str = None,
+                 preview_file: Annotated[bytes, File()] = None,
                  user: User = Depends(current_user),
                  async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
-    if not any(video_file.filename.endswith(ext) for ext in ALLOWED_FILE_EXTENSIONS):
-        raise HTTPException(status_code=400, detail="Invalid file type")
-    if video_file.size > MAX_VIDEO_SIZE:
+    if len(video_file) > MAX_VIDEO_SIZE:
         raise HTTPException(status_code=400, detail=f"Invalid file size - {video_file.size / 1024 / 1024} mb")
-    video_extension = video_file.filename.split(".")[-1]
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video.{video_extension}", Config=transfer_config)
-    preview_extension = None
+    # video_extension = video_file.filename.split(".")[-1]
+    s3.upload_fileobj(BytesIO(video_file), BUCKET_NAME, f"{user.id}/{name}/video.mp4", Config=transfer_config)
     if preview_file is not None:
-        s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview", Config=transfer_config)
-        preview_extension = preview_file.filename.split(".")[-1]
+            s3.upload_fileobj(BytesIO(preview_file), BUCKET_NAME, f"{user.id}/{name}/preview.jpeg", Config=transfer_config)
+        #preview_extension = preview_file.filename.split(".")[-1]
     return await upload_video_db(async_session, user.id, name,
                                  description, preview_file is not None,
-                                 video_extension, preview_extension)
+                                 "mp4", "jpeg")
 
 
 @router.post("/{video_id}/reaction")
@@ -260,7 +259,9 @@ async def get_videos_info(videos: List[Video]) -> List[VideoRead]:
 
 async def get_video_info(video: Video, reaction_type_id: int = -1) -> VideoRead:
     video_url = await get_presigned_url(video.video_url)
-    preview_url = await get_presigned_url(video.preview_url)
+    preview_url = None
+    if video.preview_url != "":
+        preview_url = await get_presigned_url(video.preview_url)
     return VideoRead(video_id=video.id,
                      name=video.name,
                      description=video.description,

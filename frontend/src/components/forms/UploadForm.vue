@@ -25,6 +25,7 @@
 
 <script>
 import {mapActions} from "vuex";
+import axios from "axios";
 export default {
   name: "UploadForm",
   data() {
@@ -39,14 +40,24 @@ export default {
     }
   },
   methods: {
-    upload_video() {
+    async upload_video() {
       if (this.object.video_file && this.object.name) {
-        let form = new FormData();
-        form.append('name', this.object.name)
-        form.append('description', this.object.description)
-        form.append('video_file', this.object.video_file)
-        form.append('preview_file', this.object.preview_file)
-        this.upload(form)
+        //let form = new FormData();
+        // form.append('name', this.object.name)
+        // form.append('description', this.object.description)
+        // form.append('video_file', byteArray)
+        // form.append('preview_file', byteArray_1)
+        let obj = JSON.stringify({
+          name: this.object.name,
+          description: this.object.description
+        })
+        console.log(obj)
+        const responce = await axios.post("video/upload", obj, this.object.video_file, this.object.preview_file, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+        this.upload({}, { obj: obj, video_file: this.object.video_file, preview_file: this.object.preview_file })
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }

@@ -35,7 +35,7 @@ const actions = {
 
     },
     login: async function ({commit}, obj) {
-
+        console.log()
         let r = await axios.post('auth/login', obj, {
             headers: {
                 'access': 'application/json',
@@ -46,9 +46,6 @@ const actions = {
             commit('set_auth');
         }
         return r;
-    },
-    upload: async function (form) {
-        await axios.post(`video/upload`, form);
     },
     async account_me({state}) {
         let {data} = await axios.get(`user`);
