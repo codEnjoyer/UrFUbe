@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      pre: require('../assets/video/default_preview.png'),
+      pre: require('../assets/video/default_preview.jpeg'),
     }
   },
   mounted() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!is_load">
     <video-promo
         v-for="video in videos"
         :video="video"
@@ -19,6 +19,7 @@ export default {
   },
   data() {
     return {
+        is_load: false,
       videos: Array
     }
   },
@@ -28,6 +29,7 @@ export default {
       ])
   },
   async mounted() {
+      this.is_load = true;
     let r = await this.get_homepage()
     if (r && r.status === 200) {
       this.videos = r.data
@@ -35,6 +37,7 @@ export default {
     else {
       this.$router.push('/error')
     }
+    this.is_load = false;
   }
 }
 </script>

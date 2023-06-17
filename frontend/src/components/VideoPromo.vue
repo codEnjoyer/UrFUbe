@@ -1,16 +1,19 @@
 <template>
  <div  class="container__video">
    <div class="preview__wrap">
-     <router-link :to="'/video/' + video.video_id" style="text-decoration: none; color: inherit;">
-       <img :src="pre" class="preview">
-       <a class="name">
-         <p>{{video.name}}</p>
-       </a>
+     <router-link :to="'/video/' + video.video_id">
+       <img :src="pre" class="preview" alt="Видео">
      </router-link>
-     <router-link :to="'/account/' + video.user_id" class="username">
-       <p> Автор: {{video.username}} </p>
-     </router-link>
-     <p class="username">Просмотры: {{video.count_views}}</p>
+       <div class="v">
+           <router-link :to="'/video/' + video.video_id" style="text-decoration: none; color: inherit;">
+               <a class="name">
+                   {{ video.name }}
+               </a>
+           </router-link>
+           <router-link :to="'/account/' + video.user_id" class="username">
+               Автор: {{ video.username }}
+           </router-link>
+           <p class="username">Просмотры: {{ video.count_views }}</p></div>
    </div>
  </div>
 </template>
@@ -23,16 +26,22 @@ export default {
   },
   data() {
     return {
-      pre: require('../assets/video/default_preview.png')
+      pre: require('../assets/video/default_preview.jpeg')
     }
   },
   mounted() {
-    this.pre = this.video.preview_url;
+      if (this.video.preview_url) {
+          this.pre = this.video.preview_url;
+      }
+
   }
 }
 </script>
 
 <style scoped>
+.v {
+    padding-left: 15px;
+}
 .container__video {
   display: flex;
   flex-direction: column;
@@ -51,6 +60,8 @@ export default {
   border-radius: 10px;
 }
 .preview {
+    margin-bottom: 20px;
+    border-radius: 10px;
   width: 100%;
   height: 100%;
   object-fit: cover;
