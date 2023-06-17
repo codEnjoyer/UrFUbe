@@ -86,12 +86,13 @@ export default {
         if (r_com && r_com.status === 200) {
             this.comments = r_com.data
         }
+        this.username = (await this.account_me()).username;
         this.is_load = false
         console.log(this.video.reaction_type_id);
     },
     methods: {
         ...mapActions([
-            'add_reaction', 'add_comment', 'get_comments', 'get_video'
+            'add_reaction', 'add_comment', 'get_comments', 'get_video', 'account_me'
         ]),
         async post_comment() {
             if (this.text_comment !== "") {
@@ -100,7 +101,11 @@ export default {
                         video_id: this.video.video_id,
                         text: this.text_comment
                     })
-                this.comments.push({video_id: this.video.video_id, text: this.text_comment})
+                this.comments.push({
+                    video_id: this.video.video_id,
+                    text: this.text_comment,
+                    username: this.username
+                })
                 this.text_comment = "";
             }
         },

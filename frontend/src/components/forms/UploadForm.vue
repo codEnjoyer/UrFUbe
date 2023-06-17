@@ -1,25 +1,25 @@
 <template>
   <div class="container">
     <h1>Загрузка видео</h1>
-    <div class="input-file-row input-file">
-      <div class="file__container">
-        <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
-        <span>{{object.video_file.name}}</span>
-      </div>
-      <div class="file__container pre">
-        <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
-        <span>{{object.preview_file.name}}</span>
-      </div>
-    </div>
-    <span style="color: var(--color-waiting)">{{error}}</span>
-    <div class="input-file-column">
-      <input v-model="object.name" class="inp" type="text" placeholder="Название видео">
-      <textarea v-model="object.description" class="inp" type="text" placeholder="Описание" />
-    </div>
-    <div class="input-file-row">
-      <button @click="$router.go(-1)" class="btn cent btn__exit">Отмена</button>
-      <button @click="upload_video" class="btn cent btn__submit">Опубликовать</button>
-    </div>
+        <div class="input-file-row input-file">
+            <div class="file__container">
+                <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
+                <span>{{ object.video_file.name }}</span>
+            </div>
+            <div class="file__container pre">
+                <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
+                <span>{{ object.preview_file.name }}</span>
+            </div>
+        </div>
+        <span style="color: var(--color-waiting)">{{ error }}</span>
+        <div class="input-file-column">
+            <input v-model="object.name" class="inp" type="text" placeholder="Название видео">
+            <textarea v-model="object.description" class="inp" type="text" placeholder="Описание"/>
+        </div>
+        <div class="input-file-row">
+            <button @click="$router.go(-1)" class="btn cent btn__exit">Отмена</button>
+            <button @click="upload_video" class="btn cent btn__submit">Опубликовать</button>
+        </div>
   </div>
 </template>
 
@@ -41,21 +41,17 @@ export default {
   },
   methods: {
     async upload_video() {
+
       if (this.object.video_file && this.object.name) {
-        let form = new FormData();
-        form.append('video_file', this.object.video_file)
-        form.append('preview_file', this.object.preview_file)
-        let obj = JSON.stringify({
-          name: this.object.name,
-          description: this.object.description
-        })
-        console.log(obj)
-        const responce = await axios.post("video/upload", {params: obj}, form, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-        });
-        this.upload({}, { obj: obj, video_file: this.object.video_file, preview_file: this.object.preview_file })
+          let form = new FormData();
+          form.append('name', this.object.name);
+          form.append('description', this.object.description);
+          form.append('video_file', this.object.video_file);
+          form.append('preview_file', this.object.preview_file);
+          form.forEach(el => console.log(el));
+
+
+        await this.upload(form);
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
