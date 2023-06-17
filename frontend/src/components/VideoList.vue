@@ -26,14 +26,12 @@ export default {
     }
   },
   props: {
-    video_arr: { type: Array }
+      video_arr: {type: Array}
   },
   async mounted() {
+      console.log(this.video_arr);
     if (!this.$route.params.req) {
-      let r = await this.get_videos( { user_id: Number(this.$route.params.user_id) })
-      if (r && r.status === 200) {
-        this.videos = r.data;
-      }
+        this.videos = this.video_arr;
     } else {
         let req = this.$route.params.req
         console.log(req)
@@ -44,6 +42,7 @@ export default {
           this.$router.push('/error')
         }
     }
+    console.log(this.videos);
   }, methods: {
     ...mapActions([
         'search_video',

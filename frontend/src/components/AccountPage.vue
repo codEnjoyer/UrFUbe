@@ -4,7 +4,7 @@
       <span v-if="is_load" style="width: 400px"><p>Загрузка</p></span>
       <h1>{{datas.user.username}}</h1>
     </div>
-    <video-list :video_arr="datas.videos" />
+    <video-list :video_arr="datas.videos" v-if="!is_load" />
   </div>
 </template>
 
@@ -27,26 +27,27 @@ export default {
     }
   },
   async mounted() {
-    if (this.$route.path !== 'account/me') {
-      let f = { user_id: id}
       this.is_load = true;
-      let r = await this.get_user({ user_id: id });
-      if (r && r.status === 200) {
-        this.datas.user = r.data.user
-        this.datas.videos = r.data.videos
+      if (this.$route.path !== '/account/me') {
+          let id = this.$route.params.user_id;
+          let r = await this.get_user({user_id: id});
+          if (r && r.status === 200) {
+              this.datas.user = r.data.user
+              this.datas.videos = r.data.videos
+          } else {
+              this.$router.push('/error')
+          }
       } else {
-        this.$router.push('/error')
+          this.datas.user = await this.account_me();
+          this.datas.videos = (await this.get_videos({user_id: this.datas.user.id})).data;
       }
       this.is_load = false;
-    } else {
-      this.user = await this.account_me();
-    }
-    console.log(this.user)
   },
   methods: {
     ...mapActions([
         'account_me',
-        'get_user'
+        'get_user',
+        'get_videos'
       ]),
   }
 }

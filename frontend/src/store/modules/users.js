@@ -58,7 +58,7 @@ const actions = {
         }
         return r;
     },
-    async account_me({state}) {
+    async account_me() {
         let {data} = await axios.get(`user`);
         return data;
     },
