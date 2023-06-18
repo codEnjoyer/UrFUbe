@@ -14,10 +14,14 @@
        </router-link>
      <p class="username">Просмотры: {{video.count_views}}</p>
     </div>
+    <div class="buttons" v-if="$route.path === '/account/me'">
+      <button class="btn cent btn__submit" @click="delete_video">Удалить</button>
+    </div>
   </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
 export default {
   name: "VideoPromoHorizontal",
   props: {
@@ -26,6 +30,15 @@ export default {
   data() {
     return {
       pre: require('../assets/video/default_preview.jpeg'),
+    }
+  },
+  methods: {
+    ...mapActions([
+        'remove_video'
+      ]),
+    async delete_video(){
+      await this.remove_video(this.video.video_id)
+      this.$emit("remove_item", this.video.video_id)
     }
   },
   mounted() {
@@ -44,6 +57,11 @@ export default {
   gap: 0;
   margin-bottom: 30px;
 }
+.buttons {
+  margin-left: auto;
+  right: 0;
+}
+
 .preview img {
   width: 172px;
   height: 100px;
@@ -85,5 +103,17 @@ export default {
 .username, .name, .username:hover, .name:hover, .name:active, .name:focus {
   color: var(--color-text);
   text-decoration: none;
+}
+
+.btn {
+  border-width: 0;
+  width: 200px;
+  margin-bottom: 15px;
+  margin-top: 45px;
+  border-radius: 10px;
+}
+.btn__submit, .btn__submit:active {
+  background-color: #B2FFC8;
+  color: #404040;
 }
 </style>

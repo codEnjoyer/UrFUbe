@@ -23,6 +23,9 @@ const actions = {
         {params: query, headers: {'Content-Type': 'multipart/form-data'}});
     return response;
   },
+  remove_video: async function({}, video_id) {
+    await axios.delete(`video/remove/${video_id}`, {params: {video_id: video_id}})
+  },
   add_comment: async function ({}, params) {
     let data = {
             text: params.text

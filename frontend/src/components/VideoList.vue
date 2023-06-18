@@ -5,6 +5,7 @@
       <video-promo-horizontal
           v-for="video in videos"
           :video="video"
+          @remove_item="remove"
           :key="video.video_id"
       />
     </div>
@@ -48,6 +49,11 @@ export default {
         'search_video',
         'get_videos'
       ]),
+      remove(id) {
+        this.videos = this.videos.filter(function(item) {
+          return item.video_id !== id
+        })
+      }
   }
 }
 </script>
