@@ -40,7 +40,8 @@
                 </div>
             </div>
             <div>
-                <p class="descr"> Описание: {{ video.description }}</p>
+                <p class="date">Дата публикации: {{ (new Date(video.upload_at)).toLocaleDateString() }}</p>
+                <p class="descr" v-if="!!video.description"> Описание: {{ video.description }}</p>
             </div>
             <div class="comments_container">
                 <h3>Комментарии</h3>
@@ -61,6 +62,9 @@
                     </router-link>
                     <p>
                         {{ com.text }}
+                    </p>
+                    <p class="date">
+                        {{ (new Date(com.create_at)).toLocaleDateString() }}
                     </p>
                 </div>
             </div>
@@ -121,7 +125,8 @@ export default {
                 this.comments.push({
                     video_id: this.video.video_id,
                     text: this.text_comment,
-                    username: this.username
+                    username: this.username,
+                    create_at: new Date()
                 })
                 this.text_comment = "";
             }
@@ -303,5 +308,12 @@ h2 {
     display: flex;
     margin-bottom: 15px;
     justify-content: center;
+}
+
+.date {
+    opacity: 0.5;
+    text-align: end;
+    margin-top: 15px;
+    font-size: 14px;
 }
 </style>
