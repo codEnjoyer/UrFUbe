@@ -5,8 +5,8 @@ const actions = {
     let l = await axios.get(`video/search`, {params: req})
     return l
   },
-  get_comments: async function ({}, params) {
-    return await axios.get(`video/${params.video_id}/comments`)
+  get_comments: async function ({}, video_id) {
+    return await axios.get(`video/${video_id}/comments`)
   },
   get_homepage: async function () {
     return await axios.get('/');

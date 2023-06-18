@@ -52,8 +52,8 @@ const actions = {
         return r;
     },
     async account_me() {
-        let {data} = await axios.get(`user`);
-        return data;
+        let response = await axios.get(`user`);
+        return response.data
     },
     async get_user({}, form) {
         return await axios.get(`user/${form.user_id}`)

@@ -70,8 +70,8 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('logOut')
-      this.$router.go()
       this.$router.push('/')
+      this.$router.go()
     }
   }
 }

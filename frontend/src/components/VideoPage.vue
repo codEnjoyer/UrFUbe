@@ -104,11 +104,17 @@ export default {
         } else {
             this.$router.push('/error');
         }
-        let r_com = await this.get_comments({video_id: this.$route.params.video_id})
-        if (r_com && r_com.status === 200) {
-            this.comments = r_com.data
+        if(this.$route.params.video_id){
+            let r_com = await this.get_comments(this.$route.params.video_id)
+            if (r_com && r_com.status === 200) {
+                this.comments = r_com.data
+            }
         }
-        this.username = (await this.account_me()).username;
+        if(this.$store.getters.is_authorised)
+        {
+            console.log("is_authorize")
+            this.username = (await this.account_me()).username;
+        }
         this.is_load = false
     },
     methods: {
