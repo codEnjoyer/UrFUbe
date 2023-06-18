@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.18 as build-stage
+FROM node:lts-alpine3.18
 
 WORKDIR /fastapi_app/frontend
 
@@ -10,7 +10,7 @@ COPY package-lock.json .
 
 RUN npm install
 
-COPY . .
+#COPY . .
 
 #RUN npm run serve
 CMD ["npm", "run", "serve"]

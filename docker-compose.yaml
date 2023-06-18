@@ -6,8 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-    #TODO: Заменить COPY . . на это
-#      - './frontend:/fastapi_app/frontend'
+      - './frontend:/fastapi_app/frontend'
       - '/fastapi_app/frontend/node_modules'
     ports:
       - "${FRONT_APP_PORT}:${FRONT_APP_PORT}"
