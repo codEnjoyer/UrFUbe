@@ -3,7 +3,6 @@ import axios from 'axios';
 const actions = {
   async search_video({}, req) {
     let l = await axios.get(`video/search`, {params: req})
-    console.log(l)
     return l
   },
   get_comments: async function ({}, params) {
@@ -17,7 +16,6 @@ const actions = {
   },
   upload: async function ({}, obj) {
     let query = obj.query;
-    obj.form.forEach(el => console.log(el));
     let response = await axios.post(`video/upload`,
         obj.form,
         {params: query, headers: {'Content-Type': 'multipart/form-data'}});

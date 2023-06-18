@@ -28,24 +28,18 @@ export default {
   },
   async mounted() {
       this.is_load = true;
-      if (this.$route.path !== '/account/me') {
-          let id = this.$route.params.user_id;
-          let r = await this.get_user({user_id: id});
-          if (r && r.status === 200) {
-              this.datas.user = r.data.user
-              this.datas.videos = r.data.videos
-          } else {
-              this.$router.push('/error')
-          }
+      let id = this.$route.params.user_id;
+      let r = await this.get_user({user_id: id});
+      if (r && r.status === 200) {
+          this.datas.user = r.data.user
+          this.datas.videos = r.data.videos
       } else {
-          this.datas.user = await this.account_me();
-          this.datas.videos = (await this.get_videos({user_id: this.datas.user.id})).data;
+          this.$router.push('/error')
       }
       this.is_load = false;
   },
   methods: {
     ...mapActions([
-        'account_me',
         'get_user',
         'get_videos'
       ]),

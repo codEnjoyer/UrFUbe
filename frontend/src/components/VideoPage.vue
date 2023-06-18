@@ -104,7 +104,6 @@ export default {
         }
         this.username = (await this.account_me()).username;
         this.is_load = false
-        console.log(this.video.reaction_type_id);
     },
     methods: {
         ...mapActions([
@@ -130,7 +129,6 @@ export default {
                 video_id: this.video.video_id,
                 reaction_type: 0
             }
-            console.log(params);
 
             await this.add_reaction(params);
             if (this.video.reaction_type_id !== -1) {
@@ -152,7 +150,6 @@ export default {
                 video_id: this.video.video_id,
                 reaction_type: 1
             };
-            console.log(params);
             await this.add_reaction(params);
             if (this.video.reaction_type_id !== -1) {
                 if (this.video.reaction_type_id === 0) {
@@ -296,4 +293,8 @@ video {
     fill: var(--color-waiting);
 }
 
+h2 {
+    margin: 0;
+    margin-bottom: 15px;
+}
 </style>
