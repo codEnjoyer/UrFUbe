@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <h1>Загрузка видео</h1>
+
         <div class="input-file-row input-file">
             <div class="file__container">
                 <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
@@ -12,6 +13,11 @@
             </div>
         </div>
         <p>Максимальный размер загружаемых файлов - 512 Мб</p>
+      <div class="container d-flex justify-content-center" v-if="is_uploading">
+          <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
+      </div>
         <span style="color: var(--color-waiting)">{{ error }}</span>
         <div class="input-file-column">
             <input v-model="object.name" class="inp" type="text" placeholder="Название видео">
@@ -37,13 +43,15 @@ export default {
         name: '',
         description: '',
       },
-      error: ''
+      error: '',
+        is_uploading: false
     }
   },
   methods: {
     async upload_video() {
         this.object.name = this.object.name.trim();
       if (this.object.video_file && this.object.name) {
+          this.is_uploading = true;
           let form = new FormData();
           form.append('video_file', this.object.video_file);
           form.append('preview_file', this.object.preview_file);
@@ -63,6 +71,7 @@ export default {
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
+      this.is_uploading = false;
     },
     ...mapActions([
         'upload'
