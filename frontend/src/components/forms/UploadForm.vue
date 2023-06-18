@@ -44,7 +44,8 @@ export default {
         description: '',
       },
       error: '',
-        is_uploading: false
+      is_uploading: false,
+      is_have_preview: false
     }
   },
   methods: {
@@ -54,7 +55,7 @@ export default {
           this.is_uploading = true;
           let form = new FormData();
           form.append('video_file', this.object.video_file);
-          if(this.object.preview_file === undefined){
+          if(this.is_have_preview){
             form.append('preview_file', this.object.preview_file);
           }
           let response = await this.upload({
@@ -83,8 +84,10 @@ export default {
       let preview = this.$refs.preview.files[0];
       if (video)
         this.object.video_file = video
-      if (preview)
+      if (preview){
         this.object.preview_file = preview
+        this.is_have_preview = true
+      }
     }
   }
 }
