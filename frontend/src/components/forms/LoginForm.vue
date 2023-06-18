@@ -24,6 +24,8 @@ export default {
       ]),
     async auth() {
       if (!this.is_load)
+          this.obj.username = this.obj.username.trim();
+          this.obj.password = this.obj.password.trim();
         if (this.obj.username && this.obj.password) {
           this.is_load = true;
           let r = await this.login({

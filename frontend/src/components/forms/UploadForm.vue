@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     async upload_video() {
-
+        this.object.name = this.object.name.trim();
       if (this.object.video_file && this.object.name) {
           let form = new FormData();
           form.append('video_file', this.object.video_file);
@@ -54,7 +54,10 @@ export default {
                       description: this.object.description
               }
           });
-          if (response && response.status === 200){
+          if (response.status === 400){
+            this.error = "Файл превышает максимальный возможный размер - 500 Мб"
+          }
+          else if (response && response.status === 200){
               this.$router.push("/")
           }
       } else {

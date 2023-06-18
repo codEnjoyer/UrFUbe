@@ -39,6 +39,9 @@ export default {
       ]),
     async register() {
        if (!this.is_load) {
+           this.object.username = this.object.username.trim();
+           this.object.email = this.object.email.trim();
+           this.object.password = this.object.password.trim();
          if(this.object.password.length < 8) {
            this.error = "Пароль должен содержать более 8 символов"
          } else if (this.object.email && this.object.password && this.object.username && this.object.password === this.pass_password) {
