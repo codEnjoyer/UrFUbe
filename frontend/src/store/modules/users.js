@@ -17,14 +17,10 @@ const actions = {
         }
     },
     check_authorise: async function({ commit }){
-        console.log("check_authorize")
         let r = await axios.get("protected")
-        console.log(r)
         if (!!r && r.status === 200){
-            console.log("set_auth")
             commit('set_auth')
         } else {
-            console.log("logout")
             commit('logout')
         }
     },
@@ -39,20 +35,17 @@ const actions = {
                 username: JSON.parse(json).email,
                 password: JSON.parse(json).password
             }
-            console.log(obj);
             await dispatch('login', obj);
         }
         return r
 
     },
     login: async function ({commit}, obj) {
-        console.log()
         let r = await axios.post('auth/login', obj, {
             headers: {
                 'access': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'
             }});
-        console.log(r)
         if (r && r.status === 204) {
             commit('set_auth');
         }
@@ -63,7 +56,6 @@ const actions = {
         return data;
     },
     async get_user({}, form) {
-        console.log(form)
         return await axios.get(`user/${form.user_id}`)
     },
     async logOut({ commit }) {

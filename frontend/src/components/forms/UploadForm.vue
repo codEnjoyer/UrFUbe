@@ -54,7 +54,9 @@ export default {
           this.is_uploading = true;
           let form = new FormData();
           form.append('video_file', this.object.video_file);
-          form.append('preview_file', this.object.preview_file);
+          if(this.object.preview_file === undefined){
+            form.append('preview_file', this.object.preview_file);
+          }
           let response = await this.upload({
               form: form,
               query: {
@@ -62,7 +64,7 @@ export default {
                       description: this.object.description
               }
           });
-          if (response.status === 400){
+          if (response && response.status === 400){
             this.error = "Файл превышает максимальный возможный размер - 500 Мб"
           }
           else if (response && response.status === 200){

@@ -5,6 +5,7 @@ import UploadForm from "@/components/forms/UploadForm.vue";
 import AccountPage from "@/components/AccountPage.vue";
 import VideoPage from "@/components/VideoPage.vue";
 import DialogWindow from "@/components/DialogWindow.vue";
+import MyVideoPage from "@/components/MyVideoPage.vue"
 
 
 const routes = [
@@ -18,7 +19,7 @@ const routes = [
     },
     {
         path: '/account/me',
-        component: AccountPage
+        component: MyVideoPage
     },
     {
         path: '/video/:video_id',

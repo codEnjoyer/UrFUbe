@@ -30,12 +30,10 @@ export default {
       video_arr: {type: Array}
   },
   async mounted() {
-      console.log(this.video_arr);
     if (!this.$route.params.req) {
         this.videos = this.video_arr;
     } else {
         let req = this.$route.params.req
-        console.log(req)
         let r = await this.search_video({ name: req })
         if (r && r.status === 200) {
           this.videos= r.data;
@@ -43,7 +41,6 @@ export default {
           this.$router.push('/error')
         }
     }
-    console.log(this.videos);
   }, methods: {
     ...mapActions([
         'search_video',
