@@ -62,7 +62,7 @@ export default {
   --invert-light: invert(0%);
   --background-color: #D9D9D9;
   --color-waiting: #FFB2B2;
-  --color-succses: #B2FFC8;
+  --color-success: #B2FFC8;
 }
 [data-theme="darkMode"] {
   --color-main: #303030;

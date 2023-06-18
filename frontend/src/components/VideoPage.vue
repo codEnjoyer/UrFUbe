@@ -13,13 +13,25 @@
                 <div v-if="$store.getters.is_authorised" class="reactions row__dir">
                     <div class="column_dir">
                         <button @click="add_like" class="btn">
-                            <img class="likes" src="../assets/likes.png">
+                            <svg class="like" width="25" height="25" viewBox="0 0 25 25" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M6.66662 10.3334V23.6667M6.66662 10.3334L1.33328 10.3333V23.6667H6.66662M6.66662 10.3334L13.5941 2.25132C14.2514 1.48442 15.2855 1.15474 16.2655 1.39972L16.3289 1.41557C18.1179 1.86284 18.9238 3.94745 17.901 5.48182L14.6666 10.3333H20.7471C22.4299 10.3333 23.6921 11.8728 23.3621 13.523L21.7621 21.523C21.5127 22.7695 20.4183 23.6667 19.1471 23.6667H6.66662"
+                                    stroke="#303030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
                         </button>
                         <span style="margin-left: auto; margin-right: auto">{{ video.count_likes }}</span>
                     </div>
                     <div class="column_dir">
                         <button @click="add_dislike" class="btn">
-                            <img class="dislikes" src="../assets/dislikes.png">
+                            <svg class="dislike"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18.0814 14.6533L18.0814 1.31995M18.0814 14.6533L23.4147 14.6533L23.4147 1.31995H18.0814M18.0814 14.6533L11.1539 22.7353C10.4966 23.5022 9.46247 23.8319 8.48247 23.5869L8.41913 23.5711C6.63007 23.1238 5.8242 21.0392 6.847 19.5048L10.0814 14.6533H4.00087C2.31807 14.6533 1.05593 13.1138 1.38593 11.4637L2.98594 3.46368C3.23527 2.21715 4.32967 1.31995 5.60087 1.31995L18.0814 1.31995"
+                                    stroke="#303030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
                         </button>
                         <span style="margin-left: auto; margin-right: auto">{{ video.count_dislikes }}</span>
                     </div>
@@ -259,11 +271,18 @@ video {
     margin-bottom: auto;
 }
 
-.likes:hover {
-    color: dodgerblue;
+.like, .dislike{
+    fill: var(--background-color);
+    stroke: var(--color-text);
+    width: 25px;
+    height: 25px;
 }
 
-.dislikes:hover {
-    color: #FFB2B2;
+.like:hover {
+    fill: var(--color-success);
+}
+
+.dislike:hover {
+    fill: var(--color-waiting);
 }
 </style>

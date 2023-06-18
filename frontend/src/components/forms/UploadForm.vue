@@ -148,7 +148,7 @@ h1 {
   color: #404040;
 }
 .btn__submit, .btn__submit:active {
-  background-color: var(--color-succses);
+  background-color: var(--color-success);
   color: #404040;
 }
 .inp {
