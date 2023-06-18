@@ -5,11 +5,11 @@
         <div class="input-file-row input-file">
             <div class="file__container">
                 <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
-                <p>{{ object.video_file.name }}</p>
+                <p v-if="!!object.video_file">{{ object.video_file.name }}</p>
             </div>
             <div class="file__container pre">
                 <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
-                <p>{{ object.preview_file.name }}</p>
+                <p v-if="!!object.preview_file">{{ object.preview_file.name }}</p>
             </div>
         </div>
         <p>Максимальный размер загружаемых файлов - 512 Мб</p>
@@ -38,24 +38,23 @@ export default {
   data() {
     return {
       object: {
-        preview_file: File,
-        video_file: File,
+        preview_file: null,
+        video_file: null,
         name: '',
         description: '',
       },
       error: '',
       is_uploading: false,
-      is_have_preview: false
     }
   },
   methods: {
     async upload_video() {
         this.object.name = this.object.name.trim();
-      if (this.object.video_file && this.object.name) {
+      if (this.object.video_file && this.object.name && this.object.name.length < 40) {
           this.is_uploading = true;
           let form = new FormData();
           form.append('video_file', this.object.video_file);
-          if(this.is_have_preview){
+          if(this.object.preview_file){
             form.append('preview_file', this.object.preview_file);
           }
           let response = await this.upload({
@@ -71,6 +70,8 @@ export default {
           else if (response && response.status === 200){
               this.$router.push("/")
           }
+      } else if (this.object.name.length > 40){
+        this.error = 'Слишком большое название видео'
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
@@ -84,10 +85,8 @@ export default {
       let preview = this.$refs.preview.files[0];
       if (video)
         this.object.video_file = video
-      if (preview){
+      if (preview)
         this.object.preview_file = preview
-        this.is_have_preview = true
-      }
     }
   }
 }

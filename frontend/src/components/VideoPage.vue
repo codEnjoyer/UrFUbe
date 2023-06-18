@@ -1,8 +1,10 @@
 <template>
     <div v-if="!is_load" class="container">
-        <video controls controlsList="nodownload" autoplay="autoplay">
-            <source ref="videoPlayer" :src="video.video_url">
-        </video>
+        <div class="video-wrap">
+            <video controls controlsList="nodownload" autoplay="autoplay">
+                <source ref="videoPlayer" :src="video.video_url">
+            </video>
+        </div>
         <div class="video__text">
             <div>
                 <h2 class="name">{{ video.name }}</h2>
@@ -199,12 +201,12 @@ video {
     overflow: hidden;
     text-decoration: none;
     border-bottom: 0;
+    margin-right: auto;
 }
 
 .username, .name, .username:hover {
     color: var(--color-text);
     text-decoration: none;
-    width: 33%;
 }
 
 .row__dir {
@@ -296,5 +298,10 @@ video {
 h2 {
     margin: 0;
     margin-bottom: 15px;
+}
+.video-wrap {
+    display: flex;
+    margin-bottom: 15px;
+    justify-content: center;
 }
 </style>
