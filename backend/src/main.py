@@ -10,15 +10,14 @@ from videos.router import router as video_router, get_last_video_models
 from utils.router import router as utils_router
 
 from fastapi.middleware.cors import CORSMiddleware
-from config import FRONT_APP_PORT
+from config import FRONT_HOST_PORT, FRONT_APP_PORT
 
 app = FastAPI(title='First FastAPI app')
 
 origins = [
     "http://localhost",
-    # "http://localhost:8000",
-    "http://localhost:8080",
     f"http://localhost:{FRONT_APP_PORT}",
+    f"http://localhost:{FRONT_HOST_PORT}",
 ]
 
 app.add_middleware(

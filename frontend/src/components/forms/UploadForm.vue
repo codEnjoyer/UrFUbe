@@ -4,13 +4,14 @@
         <div class="input-file-row input-file">
             <div class="file__container">
                 <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
-                <span>{{ object.video_file.name }}</span>
+                <p>{{ object.video_file.name }}</p>
             </div>
             <div class="file__container pre">
                 <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
-                <span>{{ object.preview_file.name }}</span>
+                <p>{{ object.preview_file.name }}</p>
             </div>
         </div>
+        <p>Максимальный размер загружаемых файлов - 512 Мб</p>
         <span style="color: var(--color-waiting)">{{ error }}</span>
         <div class="input-file-column">
             <input v-model="object.name" class="inp" type="text" placeholder="Название видео">

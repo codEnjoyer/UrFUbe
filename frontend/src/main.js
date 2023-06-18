@@ -26,7 +26,6 @@ app
     .use(store)
 
 axios.defaults.withCredentials = true;
-//axios.defaults.baseURL = 'http://localhost:${BACK_PORT}/';
 axios.defaults.baseURL = 'http://localhost:8000/';
 
 app.mount('#app')

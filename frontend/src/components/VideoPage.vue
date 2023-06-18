@@ -12,14 +12,14 @@
                 <div class="username" style="font-size: 16px">Просмотры: {{ video.count_views }}</div>
                 <div v-if="$store.getters.is_authorised" class="reactions row__dir">
                     <div class="column_dir">
-                        <button @click="add_like" class="btn likes">
-                            <img src="../assets/likes.png">
+                        <button @click="add_like" class="btn">
+                            <img class="likes" src="../assets/likes.png">
                         </button>
                         <span style="margin-left: auto; margin-right: auto">{{ video.count_likes }}</span>
                     </div>
                     <div class="column_dir">
-                        <button @click="add_dislike" class="btn dislikes">
-                            <img src="../assets/dislikes.png">
+                        <button @click="add_dislike" class="btn">
+                            <img class="dislikes" src="../assets/dislikes.png">
                         </button>
                         <span style="margin-left: auto; margin-right: auto">{{ video.count_dislikes }}</span>
                     </div>
@@ -257,5 +257,13 @@ video {
 .sub {
     margin-top: auto;
     margin-bottom: auto;
+}
+
+.likes:hover {
+    color: dodgerblue;
+}
+
+.dislikes:hover {
+    color: #FFB2B2;
 }
 </style>
