@@ -49,7 +49,7 @@ export default {
   align-items: flex-start;
   padding: 0;
   gap: 19px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   width: 33%;
   height: 293px;
