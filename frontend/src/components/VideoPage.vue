@@ -121,6 +121,7 @@ export default {
             'add_reaction', 'add_comment', 'get_comments', 'get_video', 'account_me'
         ]),
         async post_comment() {
+            this.text_comment = this.text_comment.trim()
             if (this.text_comment !== "") {
                 await this.add_comment(
                     {
