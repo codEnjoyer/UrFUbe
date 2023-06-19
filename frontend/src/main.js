@@ -18,7 +18,7 @@ axios.interceptors.response.use(undefined, function (error) {
       originalRequest._retry = true;
       return router.push('/error')
     } else {
-      return error
+      return error.response;
     }
   }
 });

@@ -112,7 +112,6 @@ export default {
         }
         if(this.$store.getters.is_authorised)
         {
-            console.log("is_authorize")
             this.username = (await this.account_me()).username;
         }
         this.is_load = false
@@ -177,7 +176,6 @@ export default {
                 this.video.reaction_type_id = 1;
                 this.video.count_dislikes += 1;
             }
-            console.log(this.video.reaction_type_id);
         }
     }
 }
