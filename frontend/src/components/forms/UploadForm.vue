@@ -4,11 +4,11 @@
 
         <div class="input-file-row input-file">
             <div class="file__container">
-                <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
+                <input @change="check" ref="video" type="file" accept="video/mp4, video/avi, video/*,.mkv, video/webm">
                 <p v-if="!!object.video_file">{{ object.video_file.name }}</p>
             </div>
             <div class="file__container pre">
-                <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
+                <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png, image/webp">
                 <p v-if="!!object.preview_file">{{ object.preview_file.name }}</p>
             </div>
         </div>
