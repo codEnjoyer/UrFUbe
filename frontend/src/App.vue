@@ -78,5 +78,6 @@ body {
 }
 .icon-light {
   filter: var(--invert-light);
+    cursor: pointer;
 }
 </style>

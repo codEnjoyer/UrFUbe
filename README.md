@@ -1,55 +1,32 @@
-# UrFU(be) like:
+# Видеохостинг [UrFUbe](http://158.160.109.150:8080)
 
-## Quick Start:
+Документация на хостинге [здесь](http://158.160.109.150:8000/docs)
 
-When in source root run command:
-#### docker compose up --build
+Техническая документация: [Google Docs](https://docs.google.com/document/d/1BYinXMtQc0jkYRjWXoz3YPrA6gg3O5Oc9XdZcPjQkGI/edit#).
 
-## Technologies we're using
-* Cloud storage - yandex cloud
+## Быстрый старт:
 
-## API Project
-### Models
-#### User
+* Перейти в корневую директорию проекта (UrFUbe/)
+* Создать файл .env и заполнить его по примеру dev.env
+* Выполнить команду:
+```bash
+docker compose up --build -d 
+```
 
-- name
-- user-id
-- videos
-- role: customer / admin
+API также доступен по адресу: http://localhost:{BACK_APP_PORT}/docs
 
-#### Video
-
-- title
-- status: for-authorized / for-all / for-myself
-- video-id
-- likes and dislikes
-- comments
-
-### Endpoints
-
-#### Authorization
-**POST _/login <login, password, more params>_** - create an account
-
-**GET _/login <login, password>_** - login, create session
-
-**DELETE _/login_** - logout, delete session
-
-#### Watch video
-**GET _/video/<video_id>_** - request to issue video for this request
-
-**GET _/search <text of request>_** - query to search for a video (gives a list of Video)
-
-#### Upload video
-**POST _/user/add_video_** - video upload (creates a unique video_id on the server)
-
-**DELETE _/user/delete_video/<video_id>_** - delete video 
-
-#### Comments
-**GET _/user/<user_id>/comments_** - get user's comments 
-
-**POST _/video/<video_id>/comments/add <comment text>_** - add comment
-
-**DELETE _/video/<video_id>/comments/<comment_id>_** - delete comment
-
-#### Likes
-**POST _/video/<video_id>/<like/dislike>_** - add like/dislike
+## Технологии, использующиеся в проекте
+* Система контроля версий - Git
+* Фронтенд-фреймворк - Vue.js
+* Бэкенд-фреймворк - FastAPI
+* Облачное хранилище - Yandex Cloud Object Storage
+* Хостинг - Yandex Cloud Compute Cloud
+* Контейнеризация - Docker
+* База данных - PostgreSQL
+* Язык программирования - Python
+* Веб-сервер - Uvicorn
+* Асинхронность - asyncio
+* ORM - SQLAlchemy
+* Миграции - Alembic
+* Валидация - Pydantic
+* Документация - Swagger

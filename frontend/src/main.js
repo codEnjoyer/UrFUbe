@@ -17,6 +17,8 @@ axios.interceptors.response.use(undefined, function (error) {
     } else if (error.response && error.response.status > 499) {
       originalRequest._retry = true;
       return router.push('/error')
+    } else {
+      return error.response;
     }
   }
 });

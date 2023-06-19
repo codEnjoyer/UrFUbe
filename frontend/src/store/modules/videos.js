@@ -5,8 +5,8 @@ const actions = {
     let l = await axios.get(`video/search`, {params: req})
     return l
   },
-  get_comments: async function ({}, params) {
-    return await axios.get(`video/${params.video_id}/comments`)
+  get_comments: async function ({}, video_id) {
+    return await axios.get(`video/${video_id}/comments`)
   },
   get_homepage: async function () {
     return await axios.get('/');
@@ -16,10 +16,9 @@ const actions = {
   },
   upload: async function ({}, obj) {
     let query = obj.query;
-    let response = await axios.post(`video/upload`,
-        obj.form,
-        {params: query, headers: {'Content-Type': 'multipart/form-data'}});
-    return response;
+    return await axios.post(`video/upload`,
+      obj.form,
+      {params: query, headers: {'Content-Type': 'multipart/form-data'}});
   },
   remove_video: async function({}, video_id) {
     await axios.delete(`video/remove/${video_id}`, {params: {video_id: video_id}})

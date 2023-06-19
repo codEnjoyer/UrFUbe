@@ -4,12 +4,12 @@
 
         <div class="input-file-row input-file">
             <div class="file__container">
-                <input @change="check" ref="video" type="file" accept="video/mp4, video/ogg, video/mkv, video/webm">
-                <p>{{ object.video_file.name }}</p>
+                <input @change="check" ref="video" type="file" accept="video/mp4, video/avi, video/*,.mkv, video/webm">
+                <p v-if="!!object.video_file">{{ object.video_file.name }}</p>
             </div>
             <div class="file__container pre">
-                <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png">
-                <p>{{ object.preview_file.name }}</p>
+                <input @change="check" ref="preview" type="file" accept="image/jpeg, image/png, image/webp">
+                <p v-if="!!object.preview_file">{{ object.preview_file.name }}</p>
             </div>
         </div>
         <p>Максимальный размер загружаемых файлов - 512 Мб</p>
@@ -38,38 +38,40 @@ export default {
   data() {
     return {
       object: {
-        preview_file: File,
-        video_file: File,
+        preview_file: null,
+        video_file: null,
         name: '',
         description: '',
       },
       error: '',
-        is_uploading: false
+      is_uploading: false,
     }
   },
   methods: {
     async upload_video() {
         this.object.name = this.object.name.trim();
-      if (this.object.video_file && this.object.name) {
+      if (this.object.video_file && this.object.name && this.object.name.length < 40) {
           this.is_uploading = true;
           let form = new FormData();
           form.append('video_file', this.object.video_file);
-          if(this.object.preview_file === undefined){
+          if(this.object.preview_file){
             form.append('preview_file', this.object.preview_file);
           }
-          let response = await this.upload({
+          let response = (await this.upload({
               form: form,
               query: {
                       name: this.object.name,
                       description: this.object.description
               }
-          });
+          }));
           if (response && response.status === 400){
-            this.error = "Файл превышает максимальный возможный размер - 500 Мб"
+            this.error = response.data.detail
           }
           else if (response && response.status === 200){
               this.$router.push("/")
           }
+      } else if (this.object.name.length > 40){
+        this.error = 'Слишком большое название видео'
       } else {
         this.error = 'Загрузите видео и укажите его название'
       }
@@ -113,9 +115,13 @@ h1 {
 .input-file-row button {
   width: 40%;
 }
-.file__container span {
-  width: 100%;
+.file__container p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-decoration: none;
+  overflow-wrap: anywhere;
 }
 .file__container {
   width: 344px;

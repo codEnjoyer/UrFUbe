@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const state = {
-    is_auth: false
+    is_auth: false,
+    user: null
 };
 
 const getters = {
-    is_authorised: state => state.is_auth
+    is_authorised: state => state.is_auth,
+    get_user: state => state.user
 };
 
 const actions = {
@@ -16,10 +18,11 @@ const actions = {
             return await axios.get(`video/auth/${params.video_id}`, {params: params})
         }
     },
-    check_authorise: async function({ commit }){
+    check_authorise: async function({ commit, dispatch }){
         let r = await axios.get("protected")
         if (!!r && r.status === 200){
-            commit('set_auth')
+            let res = await dispatch("account_me")
+            commit('set_auth', res)
         } else {
             commit('logout')
         }
@@ -40,20 +43,20 @@ const actions = {
         return r
 
     },
-    login: async function ({commit}, obj) {
+    login: async function ({dispatch}, obj) {
         let r = await axios.post('auth/login', obj, {
             headers: {
                 'access': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'
             }});
         if (r && r.status === 204) {
-            commit('set_auth');
+            dispatch('check_authorise');
         }
         return r;
     },
     async account_me() {
-        let {data} = await axios.get(`user`);
-        return data;
+        let response = await axios.get(`user`);
+        return response.data
     },
     async get_user({}, form) {
         return await axios.get(`user/${form.user_id}`)
@@ -65,11 +68,13 @@ const actions = {
 };
 
 const mutations = {
-    set_auth(state) {
+    set_auth(state, data) {
         state.is_auth = true;
+        state.user = data
     },
     logout(state) {
         state.is_auth = false;
+        state.user = null
     },
 };
 

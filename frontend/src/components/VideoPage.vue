@@ -1,8 +1,10 @@
 <template>
     <div v-if="!is_load" class="container">
-        <video controls controlsList="nodownload" autoplay="autoplay">
-            <source ref="videoPlayer" :src="video.video_url">
-        </video>
+        <div class="video-wrap">
+            <video controls controlsList="nodownload" autoplay="autoplay">
+                <source ref="videoPlayer" :src="video.video_url">
+            </video>
+        </div>
         <div class="video__text">
             <div>
                 <h2 class="name">{{ video.name }}</h2>
@@ -38,7 +40,8 @@
                 </div>
             </div>
             <div>
-                <p class="descr"> Описание: {{ video.description }}</p>
+                <p class="date">Дата публикации: {{ (new Date(video.upload_at)).toLocaleDateString() }}</p>
+                <p class="descr" v-if="!!video.description"> Описание: {{ video.description }}</p>
             </div>
             <div class="comments_container">
                 <h3>Комментарии</h3>
@@ -59,6 +62,9 @@
                     </router-link>
                     <p>
                         {{ com.text }}
+                    </p>
+                    <p class="date">
+                        {{ (new Date(com.create_at)).toLocaleDateString() }}
                     </p>
                 </div>
             </div>
@@ -98,11 +104,16 @@ export default {
         } else {
             this.$router.push('/error');
         }
-        let r_com = await this.get_comments({video_id: this.$route.params.video_id})
-        if (r_com && r_com.status === 200) {
-            this.comments = r_com.data
+        if(this.$route.params.video_id){
+            let r_com = await this.get_comments(this.$route.params.video_id)
+            if (r_com && r_com.status === 200) {
+                this.comments = r_com.data
+            }
         }
-        this.username = (await this.account_me()).username;
+        if(this.$store.getters.is_authorised)
+        {
+            this.username = (await this.account_me()).username;
+        }
         this.is_load = false
     },
     methods: {
@@ -110,6 +121,7 @@ export default {
             'add_reaction', 'add_comment', 'get_comments', 'get_video', 'account_me'
         ]),
         async post_comment() {
+            this.text_comment = this.text_comment.trim()
             if (this.text_comment !== "") {
                 await this.add_comment(
                     {
@@ -119,7 +131,8 @@ export default {
                 this.comments.push({
                     video_id: this.video.video_id,
                     text: this.text_comment,
-                    username: this.username
+                    username: this.username,
+                    create_at: new Date()
                 })
                 this.text_comment = "";
             }
@@ -164,7 +177,6 @@ export default {
                 this.video.reaction_type_id = 1;
                 this.video.count_dislikes += 1;
             }
-            console.log(this.video.reaction_type_id);
         }
     }
 }
@@ -199,12 +211,12 @@ video {
     overflow: hidden;
     text-decoration: none;
     border-bottom: 0;
+    margin-right: auto;
 }
 
 .username, .name, .username:hover {
     color: var(--color-text);
     text-decoration: none;
-    width: 33%;
 }
 
 .row__dir {
@@ -296,5 +308,17 @@ video {
 h2 {
     margin: 0;
     margin-bottom: 15px;
+}
+.video-wrap {
+    display: flex;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.date {
+    opacity: 0.5;
+    text-align: end;
+    margin-top: 15px;
+    font-size: 14px;
 }
 </style>
