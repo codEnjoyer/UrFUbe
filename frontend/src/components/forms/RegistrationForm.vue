@@ -50,6 +50,7 @@ export default {
            let re = await this.registration(obj);
            if (re && re.status === 201) {
              this.$router.push('/');
+             setTimeout(() => this.$router.go(), 50000000)
            } else {
              this.error = 'Повторите попытку'
            }
