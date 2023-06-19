@@ -41,7 +41,6 @@ export default {
               this.error = "Неверный логин или пароль"
           else if (r && r.status  === 204) {
              this.$router.push('/');
-             setTimeout(() => this.$router.go(), 50000)
            } else {
              this.error = 'Повторите попытку'
            }

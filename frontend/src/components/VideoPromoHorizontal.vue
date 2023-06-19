@@ -14,7 +14,7 @@
        </router-link>
      <p class="username">Просмотры: {{video.count_views}}</p>
     </div>
-    <div class="buttons" v-if="$route.path === '/account/me'">
+    <div class="buttons" v-if="$store.getters.is_authorised && video.user_id===$store.getters.get_user.id">
       <button class="btn cent btn__submit" @click="delete_video">Удалить</button>
     </div>
   </div>
