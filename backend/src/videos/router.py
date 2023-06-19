@@ -1,5 +1,5 @@
 import logging
-from typing import List, Annotated
+from typing import List
 import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
@@ -7,9 +7,9 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import func
-from io import BytesIO
+import filetype
 
-from config import BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, ALLOWED_FILE_EXTENSIONS
+from config import BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, VALID_IMAGE_TYPES, VALID_VIDEO_TYPES
 from database import get_async_session
 from auth.models import User
 from videos.models import Video, Reaction, ReactionType, Comment, VideoSortType
@@ -53,18 +53,24 @@ async def upload(name: str, description: str = None,
                  user: User = Depends(current_user),
                  async_session: AsyncSession = Depends(get_async_session)):
     if video_file.size > MAX_VIDEO_SIZE:
-        raise HTTPException(status_code=400, detail=f"Invalid file size - {video_file.size / 1024 / 1024} mb")
-    video_extension = video_file.filename.split(".")[-1]
-    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video.{video_extension}", Config=transfer_config)
-    preview_extension = None
-    if preview_file is not None:
-        preview_extension = preview_file.filename.split(".")[-1]
-        s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview.{preview_extension}",
+        raise HTTPException(status_code=400, detail=f"Недопустимый размер файла - {video_file.size / 1024 / 1024} mb")
+    video_type = filetype.guess(video_file.file)
+    if not isinstance(video_type, VALID_VIDEO_TYPES):
+        raise HTTPException(status_code=400, detail=f"Недопустимый формат видео" 
+                                                    f"{f' - {video_type.EXTENSION}' if video_type else ''}")
+    preview_type = None
+    if preview_file:
+        preview_type = filetype.guess(preview_file.file)
+        if not isinstance(preview_type, VALID_IMAGE_TYPES):
+            raise HTTPException(status_code=400, detail=f"Недопустимый формат изображения" 
+                                                        f"{f' - {preview_type.EXTENSION}' if preview_type else ''}")
+        s3.upload_fileobj(preview_file.file, BUCKET_NAME, f"{user.id}/{name}/preview.{preview_type.EXTENSION}",
                           Config=transfer_config)
-
+    s3.upload_fileobj(video_file.file, BUCKET_NAME, f"{user.id}/{name}/video.{video_type.EXTENSION}",
+                      Config=transfer_config)
     return await upload_video_db(async_session, user.id, name,
                                  description, preview_file is not None,
-                                 video_extension, preview_extension)
+                                 video_type.EXTENSION, preview_type.EXTENSION if preview_type else None)
 
 
 @router.post("/{video_id}/reaction")
@@ -123,7 +129,7 @@ async def get_video(video_id: int,
     if reaction is not None:
         reaction_type_id = reaction.reaction_type_id
     if video is None:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise HTTPException(status_code=404, detail="Видео не найдено")
     return await get_video_info(video, reaction_type_id)
 
 
@@ -133,7 +139,7 @@ async def auth_get_video(video_id: int,
                          async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     video = await get_video_with_id(async_session, video_id)
     if video is None:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise HTTPException(status_code=404, detail="Видео не найдено")
     reaction = await async_session.scalar(
         select(Reaction).where((Reaction.user_id == user.id) & (Reaction.video_id == video.id)))
     reaction_type_id = -1
@@ -188,9 +194,9 @@ async def delete_video(video_id: int,
                        async_session: AsyncSession = Depends(get_async_session)) -> VideoRead:
     video = await get_video_with_id(async_session, video_id)
     if video is None:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise HTTPException(status_code=404, detail="Видео не найдено")
     if video.user_id != user.id:
-        raise HTTPException(status_code=403, detail="Access denied")
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
     await async_session.delete(video)
     await async_session.commit()
     s3.delete_object(Bucket=BUCKET_NAME, Key=f"{user.id}/{video.name}")
@@ -203,10 +209,10 @@ async def delete_comment(video_id: int, comment_id: int,
                          async_session: AsyncSession = Depends(get_async_session)) -> CommentRead:
     video = await get_video_with_id(async_session, video_id)
     if video is None:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise HTTPException(status_code=404, detail="Видео не найдено")
     comment = await async_session.scalar(select(Comment).where(Comment.id == comment_id))
     if comment.user_id != user.id:
-        raise HTTPException(status_code=403, detail="Access denied")
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
     await async_session.delete(comment)
     await async_session.commit()
     return get_comment_info(comment)

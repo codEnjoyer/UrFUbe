@@ -57,15 +57,16 @@ export default {
           if(this.object.preview_file){
             form.append('preview_file', this.object.preview_file);
           }
-          let response = await this.upload({
+          let response = (await this.upload({
               form: form,
               query: {
                       name: this.object.name,
                       description: this.object.description
               }
-          });
+          })).response;
+          console.log(response)
           if (response && response.status === 400){
-            this.error = "Файл превышает максимальный возможный размер - 500 Мб"
+            this.error = response.data.detail
           }
           else if (response && response.status === 200){
               this.$router.push("/")
@@ -115,9 +116,13 @@ h1 {
 .input-file-row button {
   width: 40%;
 }
-.file__container span {
-  width: 100%;
+.file__container p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-decoration: none;
+  overflow-wrap: anywhere;
 }
 .file__container {
   width: 344px;

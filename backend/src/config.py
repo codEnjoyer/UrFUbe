@@ -1,5 +1,9 @@
 from dotenv import load_dotenv
 import os
+from filetype.types import image, video
+
+VALID_VIDEO_TYPES = (video.Mp4, video.Mkv, video.Avi, video.Webm)
+VALID_IMAGE_TYPES = (image.Jpeg, image.Png, image.Webp)
 
 load_dotenv()
 
@@ -29,8 +33,6 @@ SMTP_HOST = os.environ.get("SMTP_HOST")
 SMTP_PORT = os.environ.get("SMTP_PORT")
 
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
-
-ALLOWED_FILE_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mkv']
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")

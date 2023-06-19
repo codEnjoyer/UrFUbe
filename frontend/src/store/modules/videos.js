@@ -16,10 +16,9 @@ const actions = {
   },
   upload: async function ({}, obj) {
     let query = obj.query;
-    let response = await axios.post(`video/upload`,
-        obj.form,
-        {params: query, headers: {'Content-Type': 'multipart/form-data'}});
-    return response;
+    return await axios.post(`video/upload`,
+      obj.form,
+      {params: query, headers: {'Content-Type': 'multipart/form-data'}});
   },
   remove_video: async function({}, video_id) {
     await axios.delete(`video/remove/${video_id}`, {params: {video_id: video_id}})
