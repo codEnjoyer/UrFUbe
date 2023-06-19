@@ -63,10 +63,9 @@ export default {
                       name: this.object.name,
                       description: this.object.description
               }
-          })).response;
-          console.log(response)
-          if (response && response.status === 400){
-            this.error = response.data.detail
+          }));
+          if (response.response && response.response.status === 400){
+            this.error = response.response.data.detail
           }
           else if (response && response.status === 200){
               this.$router.push("/")
