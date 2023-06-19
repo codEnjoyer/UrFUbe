@@ -1,6 +1,6 @@
 # Видеохостинг [UrFUbe](http://158.160.109.150:8080)
 
-Документация на хостинге [здесь](http://158.160.109.150:8080/docs)
+Документация на хостинге [здесь](http://158.160.109.150:8000/docs)
 
 Техническая документация: [Google Docs](https://docs.google.com/document/d/1BYinXMtQc0jkYRjWXoz3YPrA6gg3O5Oc9XdZcPjQkGI/edit#).
 
