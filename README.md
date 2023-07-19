@@ -1,6 +1,4 @@
-# Видеохостинг [UrFUbe](http://158.160.109.150:8080)
-
-Документация на хостинге [здесь](http://158.160.109.150:8000/docs)
+# Видеохостинг **UrFUbe**
 
 Техническая документация: [Google Docs](https://docs.google.com/document/d/1BYinXMtQc0jkYRjWXoz3YPrA6gg3O5Oc9XdZcPjQkGI/edit#).
 
@@ -13,20 +11,20 @@
 docker compose up --build -d 
 ```
 
-API также доступен по адресу: http://localhost:{BACK_APP_PORT}/docs
+После запуска API проекта будет доступен по адресу: [http://localhost:{BACK_APP_PORT}/docs](http://localhost:8000/docs),
+а фронтенд проекта будет доступен по адресу: [http://localhost:{FRONT_APP_PORT}](http://localhost:8080),
+где {BACK_APP_PORT} и {FRONT_APP_PORT} - порты, указанные в файле .env
 
 ## Технологии, использующиеся в проекте
-* Система контроля версий - Git
-* Фронтенд-фреймворк - Vue.js
 * Бэкенд-фреймворк - FastAPI
+* Фронтенд-фреймворк - Vue.js
+* База данных - PostgreSQL
+* Миграции - Alembic
+* ORM - SQLAlchemy
+* Валидация - Pydantic
+* Контейнеризация - Docker
+* Система контроля версий - Git
 * Облачное хранилище - Yandex Cloud Object Storage
 * Хостинг - Yandex Cloud Compute Cloud
-* Контейнеризация - Docker
-* База данных - PostgreSQL
-* Язык программирования - Python
 * Веб-сервер - Uvicorn
-* Асинхронность - asyncio
-* ORM - SQLAlchemy
-* Миграции - Alembic
-* Валидация - Pydantic
 * Документация - Swagger

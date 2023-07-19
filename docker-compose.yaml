@@ -128,16 +128,16 @@ services:
   #      celery:
   #        condition: service_started
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    env_file:
-      - .env
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "${PG_ADMIN_EMAIL}"
-      PGADMIN_DEFAULT_PASSWORD: "${PG_ADMIN_PASS}"
-    ports:
-      - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
+#  pgadmin:
+#    container_name: pgadmin
+#    image: dpage/pgadmin4
+#    env_file:
+#      - .env
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: "${PG_ADMIN_EMAIL}"
+#      PGADMIN_DEFAULT_PASSWORD: "${PG_ADMIN_PASS}"
+#    ports:
+#      - "${PGADMIN_HOST_PORT}:${PGADMIN_PORT}"
 #    depends_on:
 #      backend:
 #        condition: service_healthy
