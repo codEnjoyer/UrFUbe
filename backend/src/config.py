@@ -15,7 +15,6 @@ DB_USER = os.environ.get("DB_USER")
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 FRONT_APP_PORT = os.environ.get("FRONT_APP_PORT")
-FRONT_HOST_PORT = os.environ.get("FRONT_HOST_PORT")
 BACKEND_APP_PORT = os.environ.get("BACKEND_APP_PORT")
 
 SECRET_KEY_JWT = os.environ.get("SECRET_KEY_JWT")
