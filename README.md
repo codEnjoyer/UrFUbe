@@ -1,6 +1,7 @@
 # Видеохостинг **UrFUbe**
 
 Техническая документация: [Google Docs](https://docs.google.com/document/d/1BYinXMtQc0jkYRjWXoz3YPrA6gg3O5Oc9XdZcPjQkGI/edit#).
+
 Макет сайта: [Figma](https://www.figma.com/file/7A5t1IM5tEGZMcVlQ4ESKf/UrfuBe?type=design&node-id=0-1&mode=design&t=JoL46SMXIKPIQFsc-0).
 
 ## Быстрый старт:
